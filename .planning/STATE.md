@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-15T17:52:26.029Z"
+stopped_at: Completed 01-skill-scaffold-01-01-PLAN.md
+last_updated: "2026-03-15T18:16:59.834Z"
 last_activity: 2026-03-15 — Roadmap created, phases derived from requirements
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
   percent: 0
 ---
 
@@ -50,6 +50,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01-skill-scaffold P01 | 9 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -61,6 +62,9 @@ Recent decisions affecting current work:
 - [Roadmap]: Output contract before instructions — `examples/output-sample.md` must be built first in Phase 1 to anchor all downstream generation phases
 - [Roadmap]: Source quality labels (peer-review status, image license) belong in Phase 2 fetch layer, not Phase 3 generation — retrofitting is error-prone
 - [Roadmap]: Use `export.arxiv.org/api/query` exclusively — main arxiv.org domain blocked by known Claude Code WebFetch bug (Issue #19287)
+- [Phase 01-skill-scaffold]: Skill path resolved as .claude/skills/science/ (not skills/science/) — Claude Code standard auto-discovery path requires no extra configuration
+- [Phase 01-skill-scaffold]: Output contract built first — examples/output-sample.md anchors all downstream generation phases
+- [Phase 01-skill-scaffold]: Caption ceiling established as 2,100 characters (not words) — Phase 3 must respect this constraint
 
 ### Pending Todos
 
@@ -73,6 +77,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T17:52:26.019Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-skill-scaffold/01-CONTEXT.md
+Last session: 2026-03-15T18:16:59.825Z
+Stopped at: Completed 01-skill-scaffold-01-01-PLAN.md
+Resume file: None

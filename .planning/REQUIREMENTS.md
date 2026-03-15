@@ -11,7 +11,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **FETCH-01**: Skill fetches science content from news sites (Nature, Science Daily, Ars Technica)
 - [ ] **FETCH-02**: Skill fetches science content from academic sources (arXiv API, PubMed)
-- [ ] **FETCH-03**: All generated content is grounded in actually-fetched source material only — no LLM-memory citations
+- [x] **FETCH-03**: All generated content is grounded in actually-fetched source material only — no LLM-memory citations
 - [ ] **FETCH-04**: Skill cross-validates topic across academic + news sources when available
 
 ### Topic Selection
@@ -27,7 +27,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CONT-04**: Skill generates Instagram caption (~400-600 words, keyword in first sentence)
 - [ ] **CONT-05**: Skill generates exactly 5 relevant hashtags
 - [ ] **CONT-06**: Tone is casual + authoritative ("did you know" energy meets Kurzgesagt clarity)
-- [ ] **CONT-07**: Output is clean plain text, copy-paste ready, with clearly labeled sections
+- [x] **CONT-07**: Output is clean plain text, copy-paste ready, with clearly labeled sections
 
 ### Citations & Sources
 
@@ -71,7 +71,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | FETCH-01 | Phase 2 | Pending |
 | FETCH-02 | Phase 2 | Pending |
-| FETCH-03 | Phase 1 | Pending |
+| FETCH-03 | Phase 1 | Complete |
 | FETCH-04 | Phase 2 | Pending |
 | TOPIC-01 | Phase 4 | Pending |
 | TOPIC-02 | Phase 4 | Pending |
@@ -81,7 +81,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-04 | Phase 3 | Pending |
 | CONT-05 | Phase 3 | Pending |
 | CONT-06 | Phase 3 | Pending |
-| CONT-07 | Phase 1 | Pending |
+| CONT-07 | Phase 1 | Complete |
 | CITE-01 | Phase 3 | Pending |
 | CITE-02 | Phase 3 | Pending |
 | CITE-03 | Phase 3 | Pending |

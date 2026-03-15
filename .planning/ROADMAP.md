@@ -56,7 +56,9 @@ Plans:
   3. Exactly 5 hashtags are generated — no more, no less
   4. Every claim in the output is traceable to a fetched source via a full APA/Harvard citation with DOI (where available), authors, publication date, and clickable URL
   5. At least one source image URL is included in the output
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 03-01-PLAN.md — Rewrite SKILL.md Step 5 with complete generation ruleset (slides, caption, hashtags, citations, images)
 
 ### Phase 4: Validation and Auto-Topic
 **Goal**: The skill runs daily without supervision, picks fresh topics, and never outputs a carousel that needs manual format fixes
@@ -77,5 +79,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Skill Scaffold | 1/1 | Complete   | 2026-03-15 |
 | 2. Source Fetching | 0/1 | Planning complete | - |
-| 3. Content Generation | 0/TBD | Not started | - |
+| 3. Content Generation | 0/1 | Planning complete | - |
 | 4. Validation and Auto-Topic | 0/TBD | Not started | - |

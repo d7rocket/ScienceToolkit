@@ -28,7 +28,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. The output file `output/YYYY-MM-DD-[slug].md` is created on disk with clearly labeled sections (Slide 1, Slide 2, Caption, Hashtags, Sources)
   3. A fabricated sample output exists at `examples/output-sample.md` that demonstrates the exact section structure and slide count (5-7 slides, 5 hashtags, caption under 2100 chars)
   4. All generated content is confirmed to come from fetched source material, not LLM memory (enforced by system prompt instruction in `prompts/system.md`)
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 01-01-PLAN.md — Create skill scaffold: format contract, grounding prompt, skill entrypoint, output directory
 
 ### Phase 2: Source Fetching
 **Goal**: The skill reliably fetches full, usable science content from academic and news sources with source quality metadata attached
@@ -71,7 +73,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Skill Scaffold | 0/TBD | Not started | - |
+| 1. Skill Scaffold | 0/1 | Planning complete | - |
 | 2. Source Fetching | 0/TBD | Not started | - |
 | 3. Content Generation | 0/TBD | Not started | - |
 | 4. Validation and Auto-Topic | 0/TBD | Not started | - |

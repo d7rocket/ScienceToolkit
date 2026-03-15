@@ -42,7 +42,9 @@ Plans:
   3. Every fetched source image URL is labeled with license status: `[CC-licensed]` or `[Copyrighted - use with permission]`
   4. When the same finding appears in both an academic paper and a news article, both sources are captured together and linked in the output
   5. Fetched content passes basic quality gate: article body is more than 2,000 characters (not abstract-only behind paywall)
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 02-01-PLAN.md — Rewrite SKILL.md Step 4 with complete parallel fetch pipeline for all 6 source channels
 
 ### Phase 3: Content Generation
 **Goal**: The skill produces a complete, copy-paste-ready carousel package from fetched source material
@@ -74,6 +76,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Skill Scaffold | 1/1 | Complete   | 2026-03-15 |
-| 2. Source Fetching | 0/TBD | Not started | - |
+| 2. Source Fetching | 0/1 | Planning complete | - |
 | 3. Content Generation | 0/TBD | Not started | - |
 | 4. Validation and Auto-Topic | 0/TBD | Not started | - |

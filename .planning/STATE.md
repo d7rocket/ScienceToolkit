@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-15T18:54:44.647Z"
+stopped_at: Completed 02-source-fetching 02-01-PLAN.md
+last_updated: "2026-03-15T19:28:23.714Z"
 last_activity: 2026-03-15 — Roadmap created, phases derived from requirements
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  completed_phases: 2
+  total_plans: 2
+  completed_plans: 2
   percent: 0
 ---
 
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 01-skill-scaffold P01 | 9 | 2 tasks | 4 files |
+| Phase 02-source-fetching P01 | 30 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,10 @@ Recent decisions affecting current work:
 - [Phase 01-skill-scaffold]: Skill path resolved as .claude/skills/science/ (not skills/science/) — Claude Code standard auto-discovery path requires no extra configuration
 - [Phase 01-skill-scaffold]: Output contract built first — examples/output-sample.md anchors all downstream generation phases
 - [Phase 01-skill-scaffold]: Caption ceiling established as 2,100 characters (not words) — Phase 3 must respect this constraint
+- [Phase 02-source-fetching]: Use export.arxiv.org exclusively (not arxiv.org) — main domain blocked by WebFetch bug #19287
+- [Phase 02-source-fetching]: Default arXiv labels to [Preprint - not peer reviewed] unless journal_ref field present — never falsely claim peer review
+- [Phase 02-source-fetching]: Quality gate threshold is 2,000 characters; PubMed abstracts exempt if paired with a news article covering the same finding
+- [Phase 02-source-fetching]: Cross-source matching does not stall — proceeds immediately if no match found, notes 'Sources not cross-validated'
 
 ### Pending Todos
 
@@ -77,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T18:54:44.638Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-source-fetching/02-CONTEXT.md
+Last session: 2026-03-15T19:28:23.705Z
+Stopped at: Completed 02-source-fetching 02-01-PLAN.md
+Resume file: None

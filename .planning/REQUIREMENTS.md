@@ -9,10 +9,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Source Fetching
 
-- [ ] **FETCH-01**: Skill fetches science content from news sites (Nature, Science Daily, Ars Technica)
-- [ ] **FETCH-02**: Skill fetches science content from academic sources (arXiv API, PubMed)
+- [x] **FETCH-01**: Skill fetches science content from news sites (Nature, Science Daily, Ars Technica)
+- [x] **FETCH-02**: Skill fetches science content from academic sources (arXiv API, PubMed)
 - [x] **FETCH-03**: All generated content is grounded in actually-fetched source material only — no LLM-memory citations
-- [ ] **FETCH-04**: Skill cross-validates topic across academic + news sources when available
+- [x] **FETCH-04**: Skill cross-validates topic across academic + news sources when available
 
 ### Topic Selection
 
@@ -34,8 +34,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CITE-01**: Each source has full APA/Harvard citation with DOI, authors, and publication date
 - [ ] **CITE-02**: Each citation includes a clickable source URL
 - [ ] **CITE-03**: At least one source image URL extracted per topic
-- [ ] **CITE-04**: Preprints are labeled as such (not presented as peer-reviewed)
-- [ ] **CITE-05**: Image license status flagged (CC-licensed vs copyrighted)
+- [x] **CITE-04**: Preprints are labeled as such (not presented as peer-reviewed)
+- [x] **CITE-05**: Image license status flagged (CC-licensed vs copyrighted)
 
 ## v2 Requirements
 
@@ -69,10 +69,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FETCH-01 | Phase 2 | Pending |
-| FETCH-02 | Phase 2 | Pending |
+| FETCH-01 | Phase 2 | Complete |
+| FETCH-02 | Phase 2 | Complete |
 | FETCH-03 | Phase 1 | Complete |
-| FETCH-04 | Phase 2 | Pending |
+| FETCH-04 | Phase 2 | Complete |
 | TOPIC-01 | Phase 4 | Pending |
 | TOPIC-02 | Phase 4 | Pending |
 | CONT-01 | Phase 3 | Pending |
@@ -85,8 +85,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CITE-01 | Phase 3 | Pending |
 | CITE-02 | Phase 3 | Pending |
 | CITE-03 | Phase 3 | Pending |
-| CITE-04 | Phase 2 | Pending |
-| CITE-05 | Phase 2 | Pending |
+| CITE-04 | Phase 2 | Complete |
+| CITE-05 | Phase 2 | Complete |
 
 **Coverage:**
 - v1 requirements: 18 total

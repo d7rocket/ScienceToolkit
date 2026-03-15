@@ -69,30 +69,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FETCH-01 | — | Pending |
-| FETCH-02 | — | Pending |
-| FETCH-03 | — | Pending |
-| FETCH-04 | — | Pending |
-| TOPIC-01 | — | Pending |
-| TOPIC-02 | — | Pending |
-| CONT-01 | — | Pending |
-| CONT-02 | — | Pending |
-| CONT-03 | — | Pending |
-| CONT-04 | — | Pending |
-| CONT-05 | — | Pending |
-| CONT-06 | — | Pending |
-| CONT-07 | — | Pending |
-| CITE-01 | — | Pending |
-| CITE-02 | — | Pending |
-| CITE-03 | — | Pending |
-| CITE-04 | — | Pending |
-| CITE-05 | — | Pending |
+| FETCH-01 | Phase 2 | Pending |
+| FETCH-02 | Phase 2 | Pending |
+| FETCH-03 | Phase 1 | Pending |
+| FETCH-04 | Phase 2 | Pending |
+| TOPIC-01 | Phase 4 | Pending |
+| TOPIC-02 | Phase 4 | Pending |
+| CONT-01 | Phase 3 | Pending |
+| CONT-02 | Phase 3 | Pending |
+| CONT-03 | Phase 3 | Pending |
+| CONT-04 | Phase 3 | Pending |
+| CONT-05 | Phase 3 | Pending |
+| CONT-06 | Phase 3 | Pending |
+| CONT-07 | Phase 1 | Pending |
+| CITE-01 | Phase 3 | Pending |
+| CITE-02 | Phase 3 | Pending |
+| CITE-03 | Phase 3 | Pending |
+| CITE-04 | Phase 2 | Pending |
+| CITE-05 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-15*
-*Last updated: 2026-03-15 after initial definition*
+*Last updated: 2026-03-15 after roadmap creation*

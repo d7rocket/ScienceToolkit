@@ -70,7 +70,10 @@ Plans:
   1. Running `/science` with no argument automatically discovers and selects a trending science topic without user input
   2. After 14 days of daily use, the skill has not repeated a topic or field — a topic diversity log tracks what has been covered and warns if the proposed topic was covered in the last 14 days
   3. A post-generation validation step flags any output that violates format rules (caption over 2100 chars, hashtag count not equal to 5, missing slide labels, missing peer-review status on citations) before writing to disk
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 04-01-PLAN.md — Auto-topic discovery with RSS feed scanning, cross-feed ranking, 14-day diversity tracking via topic-log.json
+- [ ] 04-02-PLAN.md — Post-generation format validation (5 mechanical checks), write-and-warn output, terminal summary extension
 
 ## Progress
 
@@ -82,4 +85,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Skill Scaffold | 1/1 | Complete   | 2026-03-15 |
 | 2. Source Fetching | 0/1 | Planning complete | - |
 | 3. Content Generation | 2/3 | Gap closure in progress | - |
-| 4. Validation and Auto-Topic | 0/TBD | Not started | - |
+| 4. Validation and Auto-Topic | 0/2 | Planning complete | - |

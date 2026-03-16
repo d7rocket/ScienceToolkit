@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-02-PLAN.md — all 4 gaps confirmed closed by user smoke test
-last_updated: "2026-03-16T10:45:55.231Z"
+stopped_at: Completed 03-03-PLAN.md — CONT-04 fully closed, Rule 3 stop clause confirmed by user smoke test
+last_updated: "2026-03-16T11:41:11.037Z"
 last_activity: 2026-03-16 — Completed Phase 3 Plan 01 (Step 5 generation ruleset)
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 5
+  completed_plans: 5
   percent: 37
 ---
 
@@ -53,6 +53,7 @@ Progress: [███░░░░░░░] 37%
 | Phase 01-skill-scaffold P01 | 9 | 2 tasks | 4 files |
 | Phase 02-source-fetching P01 | 30 | 2 tasks | 1 files |
 | Phase 03-content-generation P02 | 2 | 1 tasks | 2 files |
+| Phase 03-content-generation P03 | 15 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Recent decisions affecting current work:
 - [Phase 03-content-generation]: Slide text verbosity concern flagged by user — ~150 chars per body slide may be too much for Instagram; candidate for Phase 4 or future plan tuning
 - [Phase 03-content-generation]: Slide 1 hook rule clarified: body text under 15 words is a question or surprising fact; heading is always a descriptive title
 - [Phase 03-content-generation]: Self-check enforcement pattern: rules correct in intent but needed explicit count-and-verify instructions — self-check clauses added to Rules 2 and 3
+- [Phase 03-content-generation]: Stop clause is a hard block: 'Do NOT proceed to Step 6 until both checks pass' replaces the weaker advisory form in Rule 3 self-check
+- [Phase 03-content-generation]: Keyword gate added to Rule 3: topic keyword must appear in caption first sentence before Step 6 executes
 
 ### Pending Todos
 
@@ -89,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T10:45:55.221Z
-Stopped at: Completed 03-02-PLAN.md — all 4 gaps confirmed closed by user smoke test
+Last session: 2026-03-16T11:41:11.027Z
+Stopped at: Completed 03-03-PLAN.md — CONT-04 fully closed, Rule 3 stop clause confirmed by user smoke test
 Resume file: None

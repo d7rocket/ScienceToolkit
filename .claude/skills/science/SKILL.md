@@ -408,6 +408,28 @@ The output must follow this exact structure (matching `examples/output-sample.md
 1. Create a slug from the topic: lowercase, words separated by hyphens, no special characters (e.g., "Black Hole Acoustics" → "black-hole-acoustics")
 2. Write the full carousel package to `output/YYYY-MM-DD-[slug].md` using today's date
 
+### Topic log update
+
+After writing the output file, update the topic diversity log:
+
+1. Read `output/topic-log.json` using the Read tool. If the file does not exist, start with an empty array `[]`.
+2. Append a new entry to the array:
+   ```json
+   {
+     "date": "YYYY-MM-DD",
+     "topic": "[topic label]",
+     "field": "[Field value from the output file header]",
+     "slug": "[slug used in the output filename]"
+   }
+   ```
+   - `date`: today's date in YYYY-MM-DD format
+   - `topic`: the confirmed topic label (normalized 2-5 words, as used in Step 1)
+   - `field`: extract from the `**Field:**` line in the generated output
+   - `slug`: the same slug used in the output filename
+3. Write the updated array back to `output/topic-log.json` using the Write tool.
+
+CRITICAL: You must Read the existing file first, then append to the array, then Write the full updated array. Do NOT write only the new entry — this would destroy all previous log history.
+
 ## Step 7: Print terminal summary
 
 After writing the file, print this summary to the terminal — do NOT print the full carousel content:
@@ -417,4 +439,5 @@ Generating carousel for: [Topic]...
 Generated: [Topic]
    Slides: N | Sources: N | Field: [Field]
    -> output/YYYY-MM-DD-[slug].md
+   Topic log: updated (output/topic-log.json)
 ```

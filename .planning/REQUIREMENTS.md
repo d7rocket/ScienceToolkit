@@ -16,8 +16,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Topic Selection
 
-- [ ] **TOPIC-01**: Skill auto-picks a trending/recent science topic across all fields
-- [ ] **TOPIC-02**: Skill tracks recently covered topics/fields and avoids repetition within 14 days
+- [x] **TOPIC-01**: Skill auto-picks a trending/recent science topic across all fields
+- [x] **TOPIC-02**: Skill tracks recently covered topics/fields and avoids repetition within 14 days
 
 ### Content Generation
 
@@ -73,8 +73,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FETCH-02 | Phase 2 | Complete |
 | FETCH-03 | Phase 1 | Complete |
 | FETCH-04 | Phase 2 | Complete |
-| TOPIC-01 | Phase 4 | Pending |
-| TOPIC-02 | Phase 4 | Pending |
+| TOPIC-01 | Phase 4 | Complete |
+| TOPIC-02 | Phase 4 | Complete |
 | CONT-01 | Phase 3 | Complete |
 | CONT-02 | Phase 3 | Complete |
 | CONT-03 | Phase 3 | Complete |

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-16T12:42:23.447Z"
+stopped_at: Completed 04-validation-and-auto-topic-01-PLAN.md
+last_updated: "2026-03-16T13:06:12.060Z"
 last_activity: 2026-03-16 — Completed Phase 3 Plan 01 (Step 5 generation ruleset)
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 7
+  completed_plans: 6
   percent: 37
 ---
 
@@ -54,6 +54,7 @@ Progress: [███░░░░░░░] 37%
 | Phase 02-source-fetching P01 | 30 | 2 tasks | 1 files |
 | Phase 03-content-generation P02 | 2 | 1 tasks | 2 files |
 | Phase 03-content-generation P03 | 15 | 2 tasks | 1 files |
+| Phase 04-validation-and-auto-topic P01 | 2 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,10 @@ Recent decisions affecting current work:
 - [Phase 03-content-generation]: Self-check enforcement pattern: rules correct in intent but needed explicit count-and-verify instructions — self-check clauses added to Rules 2 and 3
 - [Phase 03-content-generation]: Stop clause is a hard block: 'Do NOT proceed to Step 6 until both checks pass' replaces the weaker advisory form in Rule 3 self-check
 - [Phase 03-content-generation]: Keyword gate added to Rule 3: topic keyword must appear in caption first sentence before Step 6 executes
+- [Phase 04-validation-and-auto-topic]: topic-log.json uses JSON array format (not NDJSON) — Read/Write approach is explicit and human-readable
+- [Phase 04-validation-and-auto-topic]: Dedup uses 2+ significant words matching — prevents false positives like quantum computing vs quantum entanglement
+- [Phase 04-validation-and-auto-topic]: Manual topic override warns but does NOT block — respects explicit user intent
+- [Phase 04-validation-and-auto-topic]: topic-log.json entry appended in Step 6 AFTER output file written — field value known from generated header
 
 ### Pending Todos
 
@@ -92,6 +97,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T12:42:23.438Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-validation-and-auto-topic/04-CONTEXT.md
+Last session: 2026-03-16T13:06:12.050Z
+Stopped at: Completed 04-validation-and-auto-topic-01-PLAN.md
+Resume file: None

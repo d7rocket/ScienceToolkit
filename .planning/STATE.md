@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-validation-and-auto-topic-01-PLAN.md
-last_updated: "2026-03-16T13:06:12.060Z"
+stopped_at: Completed 04-validation-and-auto-topic-02-PLAN.md
+last_updated: "2026-03-16T13:10:55.335Z"
 last_activity: 2026-03-16 — Completed Phase 3 Plan 01 (Step 5 generation ruleset)
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
   percent: 37
 ---
 
@@ -55,6 +55,7 @@ Progress: [███░░░░░░░] 37%
 | Phase 03-content-generation P02 | 2 | 1 tasks | 2 files |
 | Phase 03-content-generation P03 | 15 | 2 tasks | 1 files |
 | Phase 04-validation-and-auto-topic P01 | 2 | 2 tasks | 1 files |
+| Phase 04-validation-and-auto-topic P02 | 2 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ Recent decisions affecting current work:
 - [Phase 04-validation-and-auto-topic]: Dedup uses 2+ significant words matching — prevents false positives like quantum computing vs quantum entanglement
 - [Phase 04-validation-and-auto-topic]: Manual topic override warns but does NOT block — respects explicit user intent
 - [Phase 04-validation-and-auto-topic]: topic-log.json entry appended in Step 6 AFTER output file written — field value known from generated header
+- [Phase 04-validation-and-auto-topic]: Validation is non-blocking: write-and-warn pattern — file always written, violations prepended as warning at top
+- [Phase 04-validation-and-auto-topic]: 5 hard format checks only in Step 5.5: caption chars, hashtag count, slide count, slide label format, citation completeness — no content quality re-checks
+- [Phase 04-validation-and-auto-topic]: GitHub [!WARNING] callout placed BEFORE # [Topic Title] heading so warning is unmissable when reviewing output file
 
 ### Pending Todos
 
@@ -97,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T13:06:12.050Z
-Stopped at: Completed 04-validation-and-auto-topic-01-PLAN.md
+Last session: 2026-03-16T13:10:55.325Z
+Stopped at: Completed 04-validation-and-auto-topic-02-PLAN.md
 Resume file: None

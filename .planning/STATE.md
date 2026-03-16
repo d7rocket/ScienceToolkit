@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-15T19:58:41.824Z"
-last_activity: 2026-03-15 — Roadmap created, phases derived from requirements
+stopped_at: Completed 03-01-PLAN.md (Step 5 generation ruleset)
+last_updated: "2026-03-16T00:00:00.000Z"
+last_activity: 2026-03-16 — Completed Phase 3 Plan 01 (complete generation ruleset in SKILL.md Step 5)
 progress:
   total_phases: 4
   completed_phases: 2
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-15)
 
 **Core value:** Reliably deliver a complete, well-sourced daily science content package that saves hours of manual research while maintaining academic credibility.
-**Current focus:** Phase 1 — Skill Scaffold
+**Current focus:** Phase 3 — Content Generation
 
 ## Current Position
 
-Phase: 1 of 4 (Skill Scaffold)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-15 — Roadmap created, phases derived from requirements
+Phase: 3 of 4 (Content Generation)
+Plan: 1 of 1 in current phase
+Status: In progress
+Last activity: 2026-03-16 — Completed Phase 3 Plan 01 (Step 5 generation ruleset)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 37%
 
 ## Performance Metrics
 
@@ -70,6 +70,10 @@ Recent decisions affecting current work:
 - [Phase 02-source-fetching]: Default arXiv labels to [Preprint - not peer reviewed] unless journal_ref field present — never falsely claim peer review
 - [Phase 02-source-fetching]: Quality gate threshold is 2,000 characters; PubMed abstracts exempt if paired with a news article covering the same finding
 - [Phase 02-source-fetching]: Cross-source matching does not stall — proceeds immediately if no match found, notes 'Sources not cross-validated'
+- [Phase 03-content-generation]: Single focal finding architecture — carousel builds around one cross-validated or most counterintuitive finding; other sources inform caption and citations only
+- [Phase 03-content-generation]: Caption character ceiling must be measured in characters not words — 600-word caption can exceed 2100 chars; rule explicitly instructs character counting
+- [Phase 03-content-generation]: Journal names in caption must use source.journal_or_outlet from fetched source list — never LLM memory, prevents fabrication
+- [Phase 03-content-generation]: Slide text verbosity concern flagged by user — ~150 chars per body slide may be too much for Instagram; candidate for Phase 4 or future plan tuning
 
 ### Pending Todos
 
@@ -82,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T19:58:41.814Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-content-generation/03-CONTEXT.md
+Last session: 2026-03-16T00:00:00.000Z
+Stopped at: Completed 03-01-PLAN.md (Step 5 generation ruleset)
+Resume file: .planning/phases/03-content-generation/03-01-SUMMARY.md

@@ -21,19 +21,19 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content Generation
 
-- [ ] **CONT-01**: Skill generates 5-7 labeled carousel slide text chunks (one idea per slide)
-- [ ] **CONT-02**: Slide 1 has a strong hook (under 10 words, question or surprising fact)
-- [ ] **CONT-03**: Body slides end with cliff-hangers or questions to boost swipe-through
-- [ ] **CONT-04**: Skill generates Instagram caption (~400-600 words, keyword in first sentence)
-- [ ] **CONT-05**: Skill generates exactly 5 relevant hashtags
-- [ ] **CONT-06**: Tone is casual + authoritative ("did you know" energy meets Kurzgesagt clarity)
+- [x] **CONT-01**: Skill generates 5-7 labeled carousel slide text chunks (one idea per slide)
+- [x] **CONT-02**: Slide 1 has a strong hook (under 10 words, question or surprising fact)
+- [x] **CONT-03**: Body slides end with cliff-hangers or questions to boost swipe-through
+- [x] **CONT-04**: Skill generates Instagram caption (~400-600 words, keyword in first sentence)
+- [x] **CONT-05**: Skill generates exactly 5 relevant hashtags
+- [x] **CONT-06**: Tone is casual + authoritative ("did you know" energy meets Kurzgesagt clarity)
 - [x] **CONT-07**: Output is clean plain text, copy-paste ready, with clearly labeled sections
 
 ### Citations & Sources
 
-- [ ] **CITE-01**: Each source has full APA/Harvard citation with DOI, authors, and publication date
-- [ ] **CITE-02**: Each citation includes a clickable source URL
-- [ ] **CITE-03**: At least one source image URL extracted per topic
+- [x] **CITE-01**: Each source has full APA/Harvard citation with DOI, authors, and publication date
+- [x] **CITE-02**: Each citation includes a clickable source URL
+- [x] **CITE-03**: At least one source image URL extracted per topic
 - [x] **CITE-04**: Preprints are labeled as such (not presented as peer-reviewed)
 - [x] **CITE-05**: Image license status flagged (CC-licensed vs copyrighted)
 
@@ -75,16 +75,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FETCH-04 | Phase 2 | Complete |
 | TOPIC-01 | Phase 4 | Pending |
 | TOPIC-02 | Phase 4 | Pending |
-| CONT-01 | Phase 3 | Pending |
-| CONT-02 | Phase 3 | Pending |
-| CONT-03 | Phase 3 | Pending |
-| CONT-04 | Phase 3 | Pending |
-| CONT-05 | Phase 3 | Pending |
-| CONT-06 | Phase 3 | Pending |
+| CONT-01 | Phase 3 | Complete |
+| CONT-02 | Phase 3 | Complete |
+| CONT-03 | Phase 3 | Complete |
+| CONT-04 | Phase 3 | Complete |
+| CONT-05 | Phase 3 | Complete |
+| CONT-06 | Phase 3 | Complete |
 | CONT-07 | Phase 1 | Complete |
-| CITE-01 | Phase 3 | Pending |
-| CITE-02 | Phase 3 | Pending |
-| CITE-03 | Phase 3 | Pending |
+| CITE-01 | Phase 3 | Complete |
+| CITE-02 | Phase 3 | Complete |
+| CITE-03 | Phase 3 | Complete |
 | CITE-04 | Phase 2 | Complete |
 | CITE-05 | Phase 2 | Complete |
 

@@ -231,7 +231,7 @@ Build every slide and the caption around this one focal finding. Other sources i
 
 Generate between 5 and 7 slides. Use `## Slide N: [Descriptive Title]` headings (where N is the slide number).
 
-**Slide 1 (Hook):** Write under 10 words total. Must be a question or a surprising fact. Emoji allowed. Example: "What if everything we knew was wrong? JWST found out."
+**Slide 1 (Hook):** The heading (after "## Slide 1:") is a short descriptive title. The body text below the heading must be a question or surprising fact, under 15 words. The combined heading title + body should feel like a single punchy hook — glanceable in under 3 seconds. Emoji allowed in body text. Example heading: "The Universe Just Got Older" / Example body: "What if everything we knew about galaxy formation was wrong?" (10 words).
 
 **Slides 2 through N-1 (Body):** Each slide should be approximately 150 characters, written as 2–3 short, punchy sentences. No emoji on body slides. Each body slide MUST end with a cliff-hanger or question. Use patterns such as:
 - "But there's a catch."
@@ -241,9 +241,13 @@ Generate between 5 and 7 slides. Use `## Slide N: [Descriptive Title]` headings 
 
 Each cliff-hanger must connect forward — the next slide must resolve or escalate the tension set up by the previous one. Use at most one statistic per slide.
 
+**Self-check — cliff-hangers:** After drafting all slides, re-read the final sentence of each body slide (Slides 2 through N-1). If any body slide ends with a declarative period statement that does not create forward tension, rewrite that ending as a cliff-hanger or question. A body slide that summarizes multiple findings is a signal that the single-focal-finding rule (Rule 1) is being violated — refocus the slide on one aspect of the focal finding and end with a cliff-hanger teasing the next slide.
+
 **Slide N (Final — Takeaway + CTA):** Write one sentence stating the key takeaway, followed by a CTA line such as "Follow for daily science drops." Emoji allowed. Do NOT put a cliff-hanger on the final slide.
 
 **Voice throughout:** Cool professor register — calm confidence, dry wit allowed, authoritative but approachable. Target a high school reading level. When a technical term is unavoidable, add an inline plain-English gloss immediately after it (e.g., "redshift (the stretching of light as objects move away)"). Slides are punchier and bolder than the caption.
+
+**Self-check — inline glosses:** After drafting all slides, scan every slide for technical or scientific terms that a high-school reader would not know. For EACH such term, verify an inline plain-English gloss appears in parentheses immediately after it. Examples of terms requiring glosses: "conjugation" -> "conjugation (the process bacteria use to swap genes)", "redshift" -> "redshift (the stretching of light as objects move away)", "gene drives" -> "gene drives (genetic systems that force a trait through an entire population)". If any technical term lacks a gloss, add one. This is not optional — an unglossed technical term is a formatting error.
 
 ### Rule 3: Caption generation
 
@@ -255,7 +259,11 @@ Write 3–5 paragraphs following this arc:
 - **Paragraph 4 (Significance):** Why it matters, what it changes, what prior assumption it challenges.
 - **Paragraph 5 (Close):** A forward-looking question that invites engagement. No CTA in the caption — the CTA belongs on the final slide only.
 
-Target 400–600 words. Hard ceiling: 2,100 characters total. After drafting, count the characters in the caption. If the count exceeds 2,100, shorten sentences in the significance or context paragraphs until it falls within the limit. Check characters, not words — a 600-word caption can exceed 2,100 characters.
+Target 400–600 words.
+
+**Self-check — caption word count:** After drafting the caption, count the words. If the count is under 400, expand the Context paragraph (Paragraph 2) with additional background — add historical context, explain the prior state of the field, or describe what researchers tried before. Then expand the Significance paragraph (Paragraph 4) with more specific implications — who is affected, what changes in practice, what questions remain open. Keep expanding until the caption reaches at least 400 words. Do not stop at 200-300 words even if the caption feels complete — 400 words is a hard floor.
+
+Hard ceiling: 2,100 characters total. After drafting, count the characters in the caption. If the count exceeds 2,100, shorten sentences in the significance or context paragraphs until it falls within the limit. Check characters, not words — a 600-word caption can exceed 2,100 characters.
 
 Caption tone is more explanatory and flowing than the slides, but stays in the cool-professor register. No inline citation references — the text reads clean. All citations live in the Sources section only.
 

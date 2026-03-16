@@ -6,7 +6,7 @@
 
 ## Slide 1: The Universe Just Got Older
 
-What if everything we knew about galaxy formation was wrong? JWST found out.
+What if everything we knew about galaxy formation was wrong?
 
 ## Slide 2: Galaxies That Shouldn't Exist
 

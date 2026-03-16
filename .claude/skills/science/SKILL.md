@@ -254,14 +254,20 @@ Each cliff-hanger must connect forward — the next slide must resolve or escala
 Write 3–5 paragraphs following this arc:
 
 - **Paragraph 1 (Hook):** A question that includes the topic keyword. Podcast-episode-title energy.
-- **Paragraph 2 (Context):** Background needed to appreciate the focal finding. 2–3 sentences.
+- **Paragraph 2 (Context):** Background needed to appreciate the focal finding. Aim for 4-6 sentences: cover the history of the problem, prior approaches that fell short, and why this finding matters now. This paragraph carries the most expansion weight for hitting the 400-word floor.
 - **Paragraph 3 (Finding):** State the discovery clearly. Name-drop the journal or outlet naturally using the `journal_or_outlet` field from the structured source list — for example: "A study published in *{source.journal_or_outlet}* found that..." Do NOT use journal names from memory; use only names from the fetched source list.
-- **Paragraph 4 (Significance):** Why it matters, what it changes, what prior assumption it challenges.
+- **Paragraph 4 (Significance):** Why it matters, what it changes, what prior assumption it challenges. Aim for 3-5 sentences: be specific about who is affected, what practical outcomes shift, and what questions remain open.
 - **Paragraph 5 (Close):** A forward-looking question that invites engagement. No CTA in the caption — the CTA belongs on the final slide only.
 
 Target 400–600 words.
 
-**Self-check — caption word count:** After drafting the caption, count the words. If the count is under 400, expand the Context paragraph (Paragraph 2) with additional background — add historical context, explain the prior state of the field, or describe what researchers tried before. Then expand the Significance paragraph (Paragraph 4) with more specific implications — who is affected, what changes in practice, what questions remain open. Keep expanding until the caption reaches at least 400 words. Do not stop at 200-300 words even if the caption feels complete — 400 words is a hard floor.
+**Self-check — caption word count and keyword:** After drafting the caption, perform these checks before proceeding:
+
+1. **Word count gate:** Count the words in the caption. If under 400, you are not done. Expand Paragraph 2 (Context) by adding 2-3 more sentences: historical context of the problem, what researchers tried previously, how the field evolved to this point. Then expand Paragraph 4 (Significance) by adding 2-3 more sentences: who specifically is affected, what changes in clinical/practical terms, what open questions remain. Recount. Repeat this expansion cycle until the count reaches at least 400 words. Do not stop at 200-300 words — 400 words is a hard floor, not a suggestion.
+
+2. **Keyword gate:** Verify the topic keyword appears in the first sentence of Paragraph 1 (the Hook). If the keyword is absent, rewrite the first sentence to include it. Example: if the topic is "CRISPR gene editing", the first sentence must contain "CRISPR" — e.g., "What happens when CRISPR meets its toughest challenge yet?" A hook that avoids naming the topic fails this check.
+
+**Do NOT proceed to Step 6 until both checks pass.** If you cannot confirm (a) word count >= 400 and (b) topic keyword in the first sentence, return to the caption and fix it. This is a blocking gate — Step 6 must not execute on a non-compliant caption.
 
 Hard ceiling: 2,100 characters total. After drafting, count the characters in the caption. If the count exceeds 2,100, shorten sentences in the significance or context paragraphs until it falls within the limit. Check characters, not words — a 600-word caption can exceed 2,100 characters.
 

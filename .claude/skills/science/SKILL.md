@@ -8,11 +8,61 @@ allowed-tools: Read, Write, WebFetch, WebSearch, Bash
 
 Generate an Instagram science carousel for: $ARGUMENTS
 
-## Step 1: Confirm topic
+## Step 1: Discover or confirm topic
 
-Show the user the topic (`$ARGUMENTS`) and today's date. Ask them to confirm before proceeding.
+Determine the topic before proceeding. The behavior depends on whether `$ARGUMENTS` is empty or not.
 
-If no topic was provided (i.e., `$ARGUMENTS` is empty), ask the user to provide one before continuing.
+### Case A: `$ARGUMENTS` is empty (auto-discovery)
+
+Run the full auto-discovery flow:
+
+1. Fetch all 4 RSS feeds simultaneously using parallel WebFetch calls (no topic filter):
+   - `WebFetch https://www.sciencedaily.com/rss/all.xml`
+   - `WebFetch https://phys.org/rss-feed/science-news/`
+   - `WebFetch https://www.nature.com/nature.rss`
+   - `WebSearch "site:arstechnica.com/science science news [CURRENT_YEAR]"` (broad discovery query, no topic)
+
+2. From each feed, extract the titles of the 5 most recent items (published within the last 48 hours where pubDate is available; otherwise take the top 5 items).
+
+3. From the collected titles, identify 3-5 candidate topics by extracting the primary subject noun phrase from each title. Normalize to a short label (2-5 words). Example: "Scientists discover new CRISPR variant targeting antibiotic resistance" → "CRISPR antibiotic resistance".
+
+4. Count how many feeds mention each candidate (by semantic overlap, not exact match). Sort candidates descending by cross-feed count, then by recency.
+
+5. "Strong candidate" threshold: 2+ feeds mention the same topic. If no topic appears in 2+ feeds, all candidates are weak — fall back to `WebSearch "trending science news today [CURRENT_YEAR]"` and extract the top 3 results as candidates ranked by recency.
+
+6. **Dedup check** (applies to each candidate in ranked order):
+   - Read `output/topic-log.json`. If the file does not exist, treat it as an empty array — do NOT fail.
+   - For each candidate topic (in ranked order): compare it against all log entries where `date` is within the last 14 calendar days (calculate from today's date).
+   - Matching rule: a candidate matches a log entry if the candidate's normalized label shares 2+ significant words with the log entry's `topic` field (ignore common words: "the", "a", "of", "in", "and", "new", "study", "scientists", "researchers", "find", "show", "reveal", "discover", numbers, articles).
+   - If matched: skip this candidate. Print to terminal: `Skipped candidate '[topic]' — covered on [date] (14-day diversity window).`
+   - If not matched: this candidate is eligible. Use it.
+   - If ALL candidates are skipped: expand to the next-best ranked candidates from the RSS scan (candidates 4-8 if available). If still all covered, widen the match window — accept any candidate not covered in the last 7 days (halve the window). Log to terminal: `All top candidates recently covered — widened diversity window to 7 days.`
+
+7. Present the top eligible candidate to the user:
+   `Today's topic: [topic label] (covered by [Feed1], [Feed2]). [One sentence of context from the lead article.] Proceed? (y/n)`
+
+8. If the user confirms: proceed to Step 2 with this topic.
+
+9. If the user rejects: present candidates #2 and #3 in the same format. Ask: `Alternatively: (1) [topic2] or (2) [topic3]. Choose 1, 2, or type a different topic.`
+
+10. If the user rejects all or provides a manual topic: use the provided topic. Apply the dedup check (warn but proceed — see Case B).
+
+Then proceed to Step 2.
+
+### Case B: `$ARGUMENTS` is not empty (manual topic)
+
+1. Read `output/topic-log.json`. If the file does not exist, treat as empty array.
+2. Check if the provided topic matches any entry in the last 14 days (same 2+ significant words matching rule as Case A).
+3. If matched: print warning `Note: [topic] was covered on [date]. Proceeding anyway.` — do NOT block.
+4. Show confirmation: `Topic: [topic]. Today's date: [date]. Proceed? (y/n)`
+5. If confirmed: proceed to Step 2.
+6. If rejected: ask for alternative topic input.
+
+Then proceed to Step 2.
+
+### Case C: User rejection in auto-discovery
+
+Handled inline in Case A steps 9-10. No separate flow needed.
 
 ## Step 2: Load grounding rules
 

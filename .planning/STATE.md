@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Completed 03-01-PLAN.md (Step 5 generation ruleset)
-last_updated: "2026-03-16T00:00:00.000Z"
-last_activity: 2026-03-16 — Completed Phase 3 Plan 01 (complete generation ruleset in SKILL.md Step 5)
+status: executing
+stopped_at: "Completed 03-02-PLAN.md Task 1 (self-check enforcement clauses); awaiting checkpoint:human-verify (Task 2)"
+last_updated: "2026-03-16T07:56:47.604Z"
+last_activity: 2026-03-16 — Completed Phase 3 Plan 01 (Step 5 generation ruleset)
 progress:
   total_phases: 4
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
-  percent: 0
+  completed_phases: 3
+  total_plans: 4
+  completed_plans: 4
+  percent: 37
 ---
 
 # Project State
@@ -52,6 +52,7 @@ Progress: [███░░░░░░░] 37%
 *Updated after each plan completion*
 | Phase 01-skill-scaffold P01 | 9 | 2 tasks | 4 files |
 | Phase 02-source-fetching P01 | 30 | 2 tasks | 1 files |
+| Phase 03-content-generation P02 | 2 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,8 @@ Recent decisions affecting current work:
 - [Phase 03-content-generation]: Caption character ceiling must be measured in characters not words — 600-word caption can exceed 2100 chars; rule explicitly instructs character counting
 - [Phase 03-content-generation]: Journal names in caption must use source.journal_or_outlet from fetched source list — never LLM memory, prevents fabrication
 - [Phase 03-content-generation]: Slide text verbosity concern flagged by user — ~150 chars per body slide may be too much for Instagram; candidate for Phase 4 or future plan tuning
+- [Phase 03-content-generation]: Slide 1 hook rule clarified: body text under 15 words is a question or surprising fact; heading is always a descriptive title
+- [Phase 03-content-generation]: Self-check enforcement pattern: rules correct in intent but needed explicit count-and-verify instructions — self-check clauses added to Rules 2 and 3
 
 ### Pending Todos
 
@@ -86,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T00:00:00.000Z
-Stopped at: Completed 03-01-PLAN.md (Step 5 generation ruleset)
-Resume file: .planning/phases/03-content-generation/03-01-SUMMARY.md
+Last session: 2026-03-16T07:56:47.594Z
+Stopped at: Completed 03-02-PLAN.md Task 1 (self-check enforcement clauses); awaiting checkpoint:human-verify (Task 2)
+Resume file: None

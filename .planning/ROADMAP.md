@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Skill Scaffold** - Build the skill directory, output contract, and format spec before writing any instructions (completed 2026-03-15)
 - [ ] **Phase 2: Source Fetching** - Wire up arXiv API, PubMed, and science news sources with source quality labels built in
-- [ ] **Phase 3: Content Generation** - Generate carousel slides, caption, hashtags, and citations from fetched source material only
+- [x] **Phase 3: Content Generation** - Generate carousel slides, caption, hashtags, and citations from fetched source material only (completed 2026-03-16)
 - [ ] **Phase 4: Validation and Auto-Topic** - Add post-generation format validation and auto-topic discovery with diversity tracking
 
 ## Phase Details
@@ -56,7 +56,7 @@ Plans:
   3. Exactly 5 hashtags are generated — no more, no less
   4. Every claim in the output is traceable to a fetched source via a full APA/Harvard citation with DOI (where available), authors, publication date, and clickable URL
   5. At least one source image URL is included in the output
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 03-01-PLAN.md — Rewrite SKILL.md Step 5 with complete generation ruleset (slides, caption, hashtags, citations, images)
 - [ ] 03-02-PLAN.md — Gap closure: add self-check enforcement clauses for caption word count, cliff-hangers, inline glosses; clarify Slide 1 hook rule
@@ -80,5 +80,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Skill Scaffold | 1/1 | Complete   | 2026-03-15 |
 | 2. Source Fetching | 0/1 | Planning complete | - |
-| 3. Content Generation | 1/2 | Gap closure planned | - |
+| 3. Content Generation | 2/2 | Complete   | 2026-03-16 |
 | 4. Validation and Auto-Topic | 0/TBD | Not started | - |

@@ -214,21 +214,130 @@ Pass the structured source list to Step 5.
 
 ## Step 5: Generate carousel output
 
-Generate the full carousel package following the format in `examples/output-sample.md` exactly.
+Generate the full carousel package from the structured source list built in Step 4 Phase D. Follow every rule below precisely. Do not invent data — every author, journal name, DOI, and URL must come from the structured source list.
 
-Requirements:
-- **Metadata header:** `# [Topic Title]` followed by `**Date:** YYYY-MM-DD | **Field:** [Field] | **Sources:** N`
-- **Horizontal rule** separates metadata from slides
-- **Slide count:** 5-7 slides
-- **Slide 1 (hook):** under 10 words — a question or surprising fact. Emoji allowed.
-- **Body slides (2 through N-1):** approximately 150 characters each, 2-3 short punchy sentences. No emoji. Each body slide must end with a cliff-hanger or question to encourage swiping.
-- **Final slide (takeaway/CTA):** key takeaway in one line + call-to-action (e.g., "Follow for daily science drops"). Emoji allowed.
-- **Caption:** casual + authoritative tone, keyword in first sentence. MUST stay under 2,100 characters total.
-- **Hashtags:** exactly 5 hashtags on one line, space-separated
-- **Sources:** numbered list — use all three citation variants shown in `examples/output-sample.md` where applicable: `[Published in: Journal, Year]`, `[Preprint - not peer reviewed]`, `[News article]`
-- **Images:** at least one source image URL
+### Rule 1: Finding selection
 
-Section order: Slides → Caption → Hashtags → Sources → Images
+Choose the single focal finding that the entire carousel will be built around. Evaluate candidates in this priority order:
+
+1. Cross-validated finding — an academic paper and a news article that cover the same result (identified in Phase C). Prefer this above all others.
+2. Most counterintuitive or surprising result — the finding that most contradicts prior assumptions.
+3. Most quantitatively specific — the finding with a memorable, concrete statistic.
+4. Most recent — the finding with the latest publication date.
+
+Build every slide and the caption around this one focal finding. Other sources inform caption depth and citations, but do not dilute the main narrative with multiple competing findings.
+
+### Rule 2: Slide generation
+
+Generate between 5 and 7 slides. Use `## Slide N: [Descriptive Title]` headings (where N is the slide number).
+
+**Slide 1 (Hook):** Write under 10 words total. Must be a question or a surprising fact. Emoji allowed. Example: "What if everything we knew was wrong? JWST found out."
+
+**Slides 2 through N-1 (Body):** Each slide should be approximately 150 characters, written as 2–3 short, punchy sentences. No emoji on body slides. Each body slide MUST end with a cliff-hanger or question. Use patterns such as:
+- "But there's a catch."
+- "That's not the weird part."
+- "Scientists weren't expecting what came next."
+- A direct question that the next slide answers or escalates.
+
+Each cliff-hanger must connect forward — the next slide must resolve or escalate the tension set up by the previous one. Use at most one statistic per slide.
+
+**Slide N (Final — Takeaway + CTA):** Write one sentence stating the key takeaway, followed by a CTA line such as "Follow for daily science drops." Emoji allowed. Do NOT put a cliff-hanger on the final slide.
+
+**Voice throughout:** Cool professor register — calm confidence, dry wit allowed, authoritative but approachable. Target a high school reading level. When a technical term is unavoidable, add an inline plain-English gloss immediately after it (e.g., "redshift (the stretching of light as objects move away)"). Slides are punchier and bolder than the caption.
+
+### Rule 3: Caption generation
+
+Write 3–5 paragraphs following this arc:
+
+- **Paragraph 1 (Hook):** A question that includes the topic keyword. Podcast-episode-title energy.
+- **Paragraph 2 (Context):** Background needed to appreciate the focal finding. 2–3 sentences.
+- **Paragraph 3 (Finding):** State the discovery clearly. Name-drop the journal or outlet naturally using the `journal_or_outlet` field from the structured source list — for example: "A study published in *{source.journal_or_outlet}* found that..." Do NOT use journal names from memory; use only names from the fetched source list.
+- **Paragraph 4 (Significance):** Why it matters, what it changes, what prior assumption it challenges.
+- **Paragraph 5 (Close):** A forward-looking question that invites engagement. No CTA in the caption — the CTA belongs on the final slide only.
+
+Target 400–600 words. Hard ceiling: 2,100 characters total. After drafting, count the characters in the caption. If the count exceeds 2,100, shorten sentences in the significance or context paragraphs until it falls within the limit. Check characters, not words — a 600-word caption can exceed 2,100 characters.
+
+Caption tone is more explanatory and flowing than the slides, but stays in the cool-professor register. No inline citation references — the text reads clean. All citations live in the Sources section only.
+
+### Rule 4: Hashtag generation
+
+Generate EXACTLY 5 hashtags. No more, no fewer.
+
+Place all 5 on one line, space-separated, with no commas and no trailing punctuation.
+
+Select hashtags using this strategy:
+- 1 topic-specific (e.g., `#CRISPRCas9`)
+- 1 field-level (e.g., `#Genetics`)
+- 1 broad science (e.g., `#ScienceExplained`)
+- 1 platform reach (e.g., `#LearnOnInstagram`)
+- 1 trending or topical (e.g., `#GeneTherapy`)
+
+Example: `#JamesWebbTelescope #Astrophysics #SpaceScience #GalaxyFormation #ScienceExplained`
+
+### Rule 5: Citation formatting
+
+Number each source sequentially. Select the citation variant that matches its `peer_review_label`:
+
+**Variant A — Published academic paper** (`peer_review_label` contains "Published in"):
+```
+N. {authors} ({year}). {title}. *{journal_or_outlet}*.
+   DOI: https://doi.org/{doi}
+   URL: {url}
+   {peer_review_label}
+```
+Include the DOI line only when `doi` is not None. Omit volume, issue, and page numbers rather than inventing them.
+
+**Variant B — Preprint** (`peer_review_label` is "[Preprint - not peer reviewed]"):
+```
+N. {authors} ({year}). {title}. *arXiv*.
+   URL: {url}
+   [Preprint - not peer reviewed]
+```
+
+**Variant C — News article** (`peer_review_label` is "[News article]"):
+```
+N. {authors} ({year}). {title}. *{journal_or_outlet}*.
+   URL: {url}
+   [News article]
+```
+
+Every citation must have a clickable URL line. Use data from the structured source list only — never fabricate authors, DOIs, or journal names.
+
+### Rule 6: Image output
+
+Collect all non-None `image_url` values from the structured source list.
+
+Output each URL on its own line with a leading dash in the `## Images` section. Do not add license labels in the Images section — license labels already appear in the Sources section.
+
+When ordering images, list CC-licensed images before copyrighted ones.
+
+If no source returned a non-None `image_url`, write exactly: "No source images available from fetched sources."
+
+### Section ordering
+
+The output must follow this exact structure (matching `examples/output-sample.md`):
+
+```
+# [Topic Title]
+**Date:** YYYY-MM-DD | **Field:** [Field] | **Sources:** N
+---
+## Slide 1: [Title]
+...
+## Slide N: [Title]
+...
+---
+## Caption
+...
+---
+## Hashtags
+...
+---
+## Sources
+...
+---
+## Images
+...
+```
 
 ## Step 6: Write output file
 

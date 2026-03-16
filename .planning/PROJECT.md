@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Claude Code skill/agent that fetches the latest science content from news sites and academic sources (arXiv, PubMed, etc.), then packages it into Instagram carousel-ready output — slide text, caption summary, hashtags, and full academic references with links. Built for a daily science Instagram account where the user handles design and publishing manually.
+A Claude Code skill that fetches the latest science content from 6 sources (arXiv, PubMed, ScienceDaily, Phys.org, Nature News, Ars Technica), then packages it into an Instagram carousel-ready output — slide text with hooks and cliff-hangers, caption summary, hashtags, and full academic citations with DOIs and clickable URLs. Includes auto-topic discovery with 14-day diversity tracking and post-generation format validation.
 
 ## Core Value
 
@@ -12,41 +12,50 @@ Reliably deliver a complete, well-sourced daily science content package that sav
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Fetch science content from news sites (Nature, ScienceDaily, Ars Technica) — v1.0
+- ✓ Fetch from academic sources (arXiv API, PubMed) — v1.0
+- ✓ All content grounded in fetched source material only — v1.0
+- ✓ Cross-validate topic across academic + news sources — v1.0
+- ✓ Auto-pick trending science topics across all fields — v1.0
+- ✓ Track covered topics/fields, avoid repetition within 14 days — v1.0
+- ✓ Generate 5-7 labeled carousel slide text chunks — v1.0
+- ✓ Slide 1 hook under 10 words (question or surprising fact) — v1.0
+- ✓ Body slides end with cliff-hangers or questions — v1.0
+- ✓ Instagram caption 400-600 words, keyword in first sentence — v1.0
+- ✓ Exactly 5 relevant hashtags — v1.0
+- ✓ Casual + authoritative tone — v1.0
+- ✓ Clean plain text, copy-paste ready output — v1.0
+- ✓ Full APA/Harvard citations with DOI, authors, publication date — v1.0
+- ✓ Clickable source URLs on each citation — v1.0
+- ✓ At least one source image URL per topic — v1.0
+- ✓ Preprints labeled as such — v1.0
+- ✓ Image license status flagged — v1.0
 
 ### Active
 
-- [ ] Fetch latest science content from news sites (Nature, Science Daily, New Scientist, Ars Technica)
-- [ ] Fetch from academic sources (arXiv, PubMed, Google Scholar)
-- [ ] Auto-pick trending science topics across all fields (physics, biology, chemistry, space, tech)
-- [ ] Accept user-specified topics for targeted research
-- [ ] Generate 5-7 carousel slide text chunks (article broken into digestible bites)
-- [ ] Generate Instagram caption with concise summary
-- [ ] Generate exactly 5 relevant hashtags (Instagram limit)
-- [ ] Provide full academic citations (APA/Harvard style with DOIs, authors, dates)
-- [ ] Provide clickable source URLs alongside each citation
-- [ ] Provide source image URLs from original articles
-- [ ] Tone: casual + authoritative — "did you know" energy meets Kurzgesagt clarity
-- [ ] Run as a Claude Code skill/agent invoked from the terminal
+- [ ] User can specify a topic as CLI input to override auto-pick (TOPIC-03)
+- [ ] Field-spanning auto-pick with explicit rotation across physics, biology, space, chemistry, medicine, tech (TOPIC-04)
 
 ### Out of Scope
 
 - API integrations — user runs this from their Claude subscription, no external API keys
-- Automated posting to Instagram — user publishes manually
-- Image/design generation — user handles visual design from source images
-- Reels/video content — carousel-first, reels repurposing is a future consideration
-- Instagram page name brainstorming — user will decide separately
+- Automated posting to Instagram — user publishes manually; manual review is intentional quality control
+- Image/design generation — requires external AI image APIs; user handles visual design from source images
+- Reels/video content — carousel-first; reels repurposing is a future consideration
+- Multi-topic batch generation — defeats daily-freshness purpose
+- Content calendar / scheduling — requires persistent background jobs beyond CLI agent scope
+- Full article summarization (1000+ words) — Instagram caption max ~2200 chars
+- SEO keyword optimization — Instagram is discovery-driven by engagement, not keyword indexing
 
 ## Context
 
-- Target platform: Instagram carousels (10-slide max, but aiming for 5-7)
-- Instagram recently limited hashtags to 5 per post
-- User will use images from the original source articles for slide visuals
-- Slide text = chunked article content (the hook), caption = full summary + references (the depth)
-- Carousels are strong for educational content — shareable and saveable
-- All science fields are in scope: physics, biology, chemistry, space, tech, medicine, environment
-- Content should be based on the latest findings — recency matters
-- The tool runs inside Claude Code using web search/fetch capabilities (MCP tools, skills)
+Shipped v1.0 with 162 LOC across project files (markdown skill architecture).
+Tech stack: Claude Code Skills (.claude/skills/), YAML frontmatter, markdown output format.
+Sources: arXiv Atom API, NCBI ESearch + EFetch, ScienceDaily RSS, Phys.org RSS, Nature RSS, Ars Technica WebSearch.
+First real output produced: `output/2026-03-16-crispr-gene-editing.md`.
+
+Known concern: slide text verbosity (~150 chars per body slide) may be too much for Instagram — candidate for tuning.
+Known concern: arXiv `journal_ref` field population rate unknown — peer-review detection may need fallback heuristic.
 
 ## Constraints
 
@@ -60,10 +69,15 @@ Reliably deliver a complete, well-sourced daily science content package that sav
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Claude Code skill over standalone script | User wants to invoke from terminal within Claude subscription, no API keys | — Pending |
-| Both auto-pick and manual topic modes | Sometimes trending is enough, sometimes user has a specific topic | — Pending |
-| Casual + authoritative tone | Balances Instagram accessibility with science credibility | — Pending |
-| Academic citations + clickable links | Dual-layer referencing serves both credibility and convenience | — Pending |
+| Claude Code skill over standalone script | User wants to invoke from terminal within Claude subscription, no API keys | ✓ Good — `/science` works as intended |
+| Output contract before instructions | `examples/output-sample.md` built first to anchor all downstream phases | ✓ Good — prevented format drift |
+| Source quality labels in fetch layer (not generation) | Retrofitting is error-prone; labels belong where data enters | ✓ Good — peer-review and license labels flow through cleanly |
+| Use `export.arxiv.org` exclusively | Main arxiv.org domain blocked by Claude Code WebFetch bug #19287 | ✓ Good — workaround successful |
+| Single focal finding architecture | Carousel builds around one cross-validated or most counterintuitive finding | ✓ Good — focused narrative |
+| Character ceiling (not word count) for caption | 600-word caption can exceed 2100 chars; explicit character counting | ✓ Good — prevents Instagram truncation |
+| Write-and-warn validation (non-blocking) | File always written, violations prepended as warning | ✓ Good — never loses work |
+| JSON array for topic-log.json (not NDJSON) | Read/Write approach is explicit and human-readable | ✓ Good — simple persistence |
+| Stop clause pattern for self-checks | Hard block "Do NOT proceed to Step 6 until checks pass" | ✓ Good — stronger than advisory |
 
 ---
-*Last updated: 2026-03-15 after initialization*
+*Last updated: 2026-03-16 after v1.0 milestone*

@@ -59,7 +59,7 @@ Plans:
 **Plans:** 2/2 plans complete
 Plans:
 - [x] 03-01-PLAN.md — Rewrite SKILL.md Step 5 with complete generation ruleset (slides, caption, hashtags, citations, images)
-- [ ] 03-02-PLAN.md — Gap closure: add self-check enforcement clauses for caption word count, cliff-hangers, inline glosses; clarify Slide 1 hook rule
+- [x] 03-02-PLAN.md — Gap closure: add self-check enforcement clauses for caption word count, cliff-hangers, inline glosses; clarify Slide 1 hook rule
 
 ### Phase 4: Validation and Auto-Topic
 **Goal**: The skill runs daily without supervision, picks fresh topics, and never outputs a carousel that needs manual format fixes

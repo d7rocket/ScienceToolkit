@@ -57,7 +57,7 @@ completed: 2026-03-16
 - **Duration:** ~2 min
 - **Started:** 2026-03-16T07:53:02Z
 - **Completed:** 2026-03-16T07:54:42Z
-- **Tasks:** 1 of 2 complete (Task 2 is checkpoint:human-verify)
+- **Tasks:** 2 of 2 complete
 - **Files modified:** 2
 
 ## Accomplishments
@@ -71,6 +71,7 @@ completed: 2026-03-16
 ## Task Commits
 
 1. **Task 1: Add self-check enforcement clauses and clarify Slide 1 hook rule** - `391a583` (feat)
+2. **Task 2: Re-run smoke test to verify all 4 gaps are closed** - checkpoint approved by user (human-verify)
 
 ## Files Created/Modified
 
@@ -96,11 +97,13 @@ None - no external service configuration required.
 
 ## Next Phase Readiness
 
-Task 2 (checkpoint:human-verify) requires a live `/science [topic]` run to verify all 4 gaps are closed by the self-check clauses. The checkpoint provides exact verification steps:
-- Caption must be >= 400 words (count via `sed -n '/^## Caption$/,/^---$/p' output/*.md | wc -w`)
-- All body slides (2 through N-1) must end with cliff-hanger or question
-- Slide 1 body must be under 15 words and a question or surprising fact
-- All technical terms must have inline glosses in parentheses
+All 4 verification gaps confirmed closed by user smoke test (Task 2 checkpoint approved):
+- Gap 1 (CONT-04): Caption >= 400 words — confirmed
+- Gap 2 (CONT-03): All body slides end with cliff-hanger or question — confirmed
+- Gap 3 (CONT-02): Slide 1 body under 15 words, question or surprising fact — confirmed
+- Gap 4 (CONT-06): All technical terms have inline glosses — confirmed
+
+Phase 3 is complete. Phase 4 (Validation and Auto-Topic) is the next phase.
 
 ---
 *Phase: 03-content-generation*

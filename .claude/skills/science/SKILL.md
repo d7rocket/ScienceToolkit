@@ -403,10 +403,76 @@ The output must follow this exact structure (matching `examples/output-sample.md
 ...
 ```
 
+## Step 5.5: Validate format
+
+After generating the carousel output in Step 5, run these 5 mechanical checks before writing to disk. Collect ALL violations into a list — do not stop at the first one. Do NOT re-check content quality rules (cliff-hangers, keyword placement, glosses) — Phase 3 self-checks in Step 5 already handle those.
+
+### CHECK 1 — Caption length
+
+Count the total characters in the Caption section text. "Caption section text" means everything between the `## Caption` heading and the next `---` divider, EXCLUDING the `## Caption` heading line itself and any leading/trailing blank lines.
+
+Violation if character count > 2100.
+Violation message: `Caption exceeds 2100 characters (actual: N chars).`
+
+### CHECK 2 — Hashtag count
+
+Count all standalone tokens beginning with `#` that appear in the Hashtags section (between the `## Hashtags` heading and the next `---` divider). A standalone hashtag token has no spaces within it (e.g., `#ScienceExplained` is one token). Do NOT count `#` symbols from slide headings, image URLs, or other sections.
+
+Violation if count is not exactly 5.
+Violation message: `Hashtag count is N — must be exactly 5.`
+
+### CHECK 3 — Slide count
+
+Count all headings in the generated output that match the pattern `## Slide N:` where N is a number.
+
+Violation if count < 5 or count > 7.
+Violation message: `Slide count is N — must be between 5 and 7.`
+
+### CHECK 4 — Slide label format
+
+For each slide heading found in CHECK 3, verify it follows the pattern `## Slide N: [Title]` where N is a sequential number and [Title] is a non-empty descriptive title after the colon. A heading like `## Slide 3:` (no title) or `## Slide Three: Title` (non-numeric) is a violation.
+
+Violation message: `Slide N heading is malformed or missing title.`
+
+### CHECK 5 — Citation completeness
+
+In the Sources section (between `## Sources` and the next `---` divider), for each numbered citation entry, verify:
+  (a) A line is present containing one of: `[Published in:`, `[Preprint`, or `[News article]`
+  (b) A line beginning with `URL:` is present
+
+Violation for any citation missing either field.
+Violation message: `Citation N is missing [peer-review label / URL line].` (specify which is missing)
+
+### Validation result
+
+If the violations list is empty: record `validation_status = "PASS"` for use in Steps 6 and 7.
+
+If the violations list is non-empty: record `validation_status = "FAIL (N violations)"` and keep the full violations list for Step 6.
+
+Proceed to Step 6 in either case — validation does NOT block writing.
+
 ## Step 6: Write output file
 
 1. Create a slug from the topic: lowercase, words separated by hyphens, no special characters (e.g., "Black Hole Acoustics" → "black-hole-acoustics")
 2. Write the full carousel package to `output/YYYY-MM-DD-[slug].md` using today's date
+
+### Validation warnings
+
+If `validation_status` from Step 5.5 is "PASS": skip this subsection — write the output file normally.
+
+If `validation_status` is "FAIL": prepend the following block at the very top of the output file, BEFORE the `# [Topic Title]` heading. This must be the first content in the file:
+
+> [!WARNING]
+> ## Validation Warnings
+> The following format violations were detected in this output. Review before posting.
+>
+> - [violation message 1]
+> - [violation message 2]
+> (list all violation messages from Step 5.5)
+>
+> ---
+
+Then write the rest of the carousel content (# [Topic Title] heading and everything after it) immediately below the warning block.
 
 ### Topic log update
 
@@ -439,5 +505,13 @@ Generating carousel for: [Topic]...
 Generated: [Topic]
    Slides: N | Sources: N | Field: [Field]
    -> output/YYYY-MM-DD-[slug].md
+   Validation: PASS
    Topic log: updated (output/topic-log.json)
 ```
+
+Or when violations exist:
+```
+   Validation: FAIL — N violations (see file header)
+```
+
+Replace the literal `PASS` or `FAIL — N violations` based on `validation_status` from Step 5.5.

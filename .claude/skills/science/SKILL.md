@@ -78,11 +78,11 @@ This is the canonical format contract. Every section, heading style, citation fo
 
 ## Step 4: Fetch source material
 
-Fetch real content from all 6 source channels. Execute Phases A through D in order.
+Fetch real content from all 7 source channels. Execute Phases A through D in order.
 
 ### Phase A: Parallel source search
 
-Perform all 6 searches simultaneously (parallel WebFetch calls). Calculate date variables first:
+Perform all 7 searches simultaneously (parallel WebFetch calls). Calculate date variables first:
 - TODAY = today's date in YYYYMMDD format (GMT)
 - 7_DAYS_AGO = today minus 7 days in YYYYMMDD format (GMT)
 - CURRENT_YEAR = current 4-digit year
@@ -199,6 +199,33 @@ WebSearch "site:arstechnica.com/science {TOPIC} {CURRENT_YEAR}"
 Attempt `WebFetch` on each discovered URL. If blocked, skip and log as unavailable.
 
 Label: `[News article]`. Image license: `[Copyrighted - use with permission]`.
+
+**7. ScienceDirect** — WebSearch + article fetch
+
+```
+WebSearch "site:sciencedirect.com {TOPIC} {CURRENT_YEAR}"
+```
+
+From search results, select the top 2–3 article URLs on `sciencedirect.com/science/article/` paths. Skip non-article pages (journal homepages, topic browse pages, special issue listings).
+
+For each selected URL:
+```
+WebFetch {article_url}
+```
+
+Extract from the article page using standard citation meta tags:
+- `<meta name="citation_title">` — article title
+- `<meta name="citation_author">` — first 3 authors + "et al." if more
+- `<meta name="citation_journal_title">` — journal name
+- `<meta name="citation_publication_date">` or `<meta name="citation_date">` — publication year
+- `<meta name="citation_doi">` — DOI (Elsevier DOIs follow the `10.1016/...` pattern)
+- Abstract — from the abstract section on the page
+
+Peer-review label: Always `[Published in: {Journal}, {Year}]` — ScienceDirect hosts peer-reviewed journal content exclusively.
+
+Image: `image_url: None` (ScienceDirect figures are paywalled). Image license: N/A.
+
+Note: Many ScienceDirect articles are paywalled. If WebFetch returns only title, abstract, and metadata (body text < 2,000 characters), keep as a citation-only source — the abstract and metadata are sufficient for citation and grounding purposes. The quality gate in Phase B applies normally.
 
 ---
 
@@ -377,6 +404,37 @@ When ordering images, list CC-licensed images before copyrighted ones.
 
 If no source returned a non-None `image_url`, write exactly: "No source images available from fetched sources."
 
+### Rule 7: Color scheme
+
+Suggest a color palette tailored to the topic and scientific field. The palette should feel modern, Instagram-ready, and visually tied to the subject matter.
+
+Generate exactly 4 colors:
+
+| Role | Purpose |
+|------|---------|
+| **Background** | Slide background — should be dark or muted enough for white/light text to read clearly |
+| **Primary text** | Main text color — must have strong contrast against the background (WCAG AA minimum) |
+| **Accent** | Highlights, keywords, slide number badges, decorative elements |
+| **Highlight** | Secondary accent for pull-quotes, divider lines, or subtle emphasis — should complement, not clash with, the accent |
+
+Output format in the `## Color Scheme` section:
+
+```
+**Palette:** [Palette Name]
+- Background: [hex] — [one-word descriptor]
+- Primary text: [hex] — [one-word descriptor]
+- Accent: [hex] — [one-word descriptor]
+- Highlight: [hex] — [one-word descriptor]
+
+*[1 sentence explaining why this palette fits the topic]*
+```
+
+Color selection guidelines:
+- **Tie colors to the subject matter.** Astrophysics → deep space blues/purples. Biology → greens/teals. Chemistry → amber/molecular oranges. Medicine → clinical blues/whites. Climate → earth tones. Quantum physics → neon/electric tones on dark backgrounds.
+- **Avoid generic palettes.** Don't default to black-and-white or plain blue every time. Each topic should feel visually distinct.
+- **Ensure readability.** Background + primary text must have sufficient contrast for body text on a phone screen.
+- **Stay on-brand for science communication.** Professional but not corporate — think Kurzgesagt, not PowerPoint.
+
 ### Section ordering
 
 The output must follow this exact structure (matching `examples/output-sample.md`):
@@ -400,6 +458,9 @@ The output must follow this exact structure (matching `examples/output-sample.md
 ...
 ---
 ## Images
+...
+---
+## Color Scheme
 ...
 ```
 

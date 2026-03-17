@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  A Claude Code skill that fetches live research from arXiv, PubMed, Nature, ScienceDaily & more, then generates publication-ready carousel slides, captions, hashtags, and full academic citations.
+  A Claude Code skill that fetches live research from arXiv, PubMed, ScienceDirect, Nature, ScienceDaily & more, then generates publication-ready carousel slides, captions, hashtags, and full academic citations.
 </p>
 
 ---
@@ -30,11 +30,12 @@ AI-generated science content has a **40-91% citation hallucination rate**. Fake 
 One command triggers a **7-step pipeline**:
 
 ```
- Discover Topic ─→ Load Rules ─→ Fetch 6 Sources ─→ Generate Content ─→ Validate ─→ Write File
+ Discover Topic ─→ Load Rules ─→ Fetch 7 Sources ─→ Generate Content ─→ Validate ─→ Write File
        │                              │                      │                │
    RSS + WebSearch            arXiv, PubMed,          5-7 slides,       5 format
-   14-day diversity          ScienceDaily,         caption, hashtags,    checks
-     tracking               Phys.org, Nature,      APA citations      (PASS/FAIL)
+   14-day diversity         ScienceDirect,         caption, hashtags,    checks
+     tracking               ScienceDaily,          APA citations      (PASS/FAIL)
+                           Phys.org, Nature,
                              Ars Technica
 ```
 
@@ -71,7 +72,7 @@ Every file contains:
 
 ## Features
 
-- **6-channel parallel fetching** — arXiv, PubMed, ScienceDaily, Phys.org, Nature News, Ars Technica
+- **7-channel parallel fetching** — arXiv, PubMed, ScienceDirect, ScienceDaily, Phys.org, Nature News, Ars Technica
 - **Auto-topic discovery** — scans RSS feeds for trending topics, picks the most cross-referenced
 - **14-day diversity tracking** — won't repeat the same topic within two weeks
 - **Format validation** — 5 mechanical checks before output (caption length, hashtag count, slide count, label format, citation completeness)
@@ -119,6 +120,7 @@ ScienceToolkit/
 | WebSearch / WebFetch | Live source fetching with dynamic filtering |
 | arXiv REST API | Academic papers (via `export.arxiv.org`) |
 | PubMed E-utilities | Peer-reviewed medical research |
+| ScienceDirect (via WebSearch) | Peer-reviewed Elsevier journal articles |
 | RSS (ScienceDaily, Phys.org, Nature) | Trending topic discovery |
 
 ## Design Decisions

@@ -75,3 +75,15 @@ JWST is just getting started. Its instruments are rated for a 10-year minimum mi
 
 - https://stsci-opo.org/STScI-01G8H1NJJ9YSAQFMXBP9TKBSXF.png
 - https://stsci-opo.org/STScI-01G8H36XHYQKK6DPJZKYQ7ZMNQ.png
+
+---
+
+## Color Scheme
+
+**Palette:** Deep Field
+- Background: #0B0E2D — midnight
+- Primary text: #F0F0F5 — frost
+- Accent: #6C5CE7 — nebula
+- Highlight: #00CEC9 — teal
+
+*Deep space tones mirror JWST's infrared imagery, with a nebula purple accent that evokes the cosmic structures the telescope reveals.*

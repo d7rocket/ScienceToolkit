@@ -3,6 +3,7 @@ import { DropZone } from './components/DropZone';
 import { MetaBar } from './components/MetaBar';
 import { SlideCanvas } from './components/SlideCanvas';
 import { ThumbnailStrip } from './components/ThumbnailStrip';
+import { ExportPanel } from './components/ExportPanel';
 import { useCarouselStore } from './store/useCarouselStore';
 
 export default function App() {
@@ -21,8 +22,9 @@ export default function App() {
             <aside className="w-44 flex-shrink-0 border-r border-neutral-800 overflow-y-auto bg-neutral-900">
               <ThumbnailStrip />
             </aside>
-            <main className="flex-1 flex items-start justify-center p-6 overflow-auto">
+            <main className="flex-1 flex flex-col items-center p-6 overflow-auto gap-4">
               <SlideCanvas />
+              <ExportPanel />
             </main>
           </div>
         ) : (

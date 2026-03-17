@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { Canvas } from 'fabric';
 import { useCarouselStore } from '../store/useCarouselStore';
 import { renderSlide } from '../canvas/renderSlide';
+import { registerCanvas, unregisterCanvas, canvasRegistry } from '../canvas/canvasRegistry';
+import { exportSlideAsPng } from '../export/exportPng';
 import type { ParsedSlide, ColorScheme } from '../types/carousel';
 
 const THUMB_SIZE = 160;
@@ -29,9 +31,12 @@ function Thumbnail({ slide, colors, isActive, onClick }: ThumbnailProps) {
       renderOnAddRemove: false,
     });
     fabricRef.current = fc;
+    // slide.index is 1-based; registry is 0-based
+    registerCanvas(slide.index - 1, fc);
     renderSlide(fc, slide, colors);
 
     return () => {
+      unregisterCanvas(slide.index - 1);
       fc.dispose();
       fabricRef.current = null;
     };
@@ -45,39 +50,57 @@ function Thumbnail({ slide, colors, isActive, onClick }: ThumbnailProps) {
     renderSlide(fc, slide, colors);
   }, [slide, colors]);
 
+  function handleDownload(e: React.MouseEvent) {
+    e.stopPropagation();
+    const canvas = canvasRegistry.get(slide.index - 1);
+    if (!canvas) return;
+    const filename = `slide-${String(slide.index).padStart(2, '0')}.png`;
+    exportSlideAsPng(canvas, filename);
+  }
+
   return (
-    <button
-      onClick={onClick}
-      aria-selected={isActive}
-      className={`block w-full p-1 rounded transition-colors ${
-        isActive
-          ? 'ring-2 ring-indigo-400 bg-neutral-800'
-          : 'hover:bg-neutral-800'
-      }`}
-      title={`Slide ${slide.index}`}
-    >
-      {/* Scaled canvas container */}
-      <div
-        style={{
-          width: THUMB_SIZE,
-          height: THUMB_SIZE,
-          overflow: 'hidden',
-          position: 'relative',
-        }}
+    <div className="w-full">
+      <button
+        onClick={onClick}
+        aria-selected={isActive}
+        className={`block w-full p-1 rounded transition-colors ${
+          isActive
+            ? 'ring-2 ring-indigo-400 bg-neutral-800'
+            : 'hover:bg-neutral-800'
+        }`}
+        title={`Slide ${slide.index}`}
       >
+        {/* Scaled canvas container */}
         <div
           style={{
-            width: 1080,
-            height: 1080,
-            transform: `scale(${THUMB_SCALE})`,
-            transformOrigin: 'top left',
+            width: THUMB_SIZE,
+            height: THUMB_SIZE,
+            overflow: 'hidden',
+            position: 'relative',
           }}
         >
-          <canvas ref={canvasElRef} />
+          <div
+            style={{
+              width: 1080,
+              height: 1080,
+              transform: `scale(${THUMB_SCALE})`,
+              transformOrigin: 'top left',
+            }}
+          >
+            <canvas ref={canvasElRef} />
+          </div>
         </div>
-      </div>
-      <p className="text-xs text-neutral-500 mt-1 text-center">{slide.index}</p>
-    </button>
+        <p className="text-xs text-neutral-500 mt-1 text-center">{slide.index}</p>
+      </button>
+      {/* Per-slide fallback download button */}
+      <button
+        onClick={handleDownload}
+        title={`Download slide ${slide.index} as PNG`}
+        className="mt-1 w-full text-xs text-neutral-500 hover:text-indigo-400 hover:bg-neutral-800 rounded py-0.5 transition-colors"
+      >
+        PNG
+      </button>
+    </div>
   );
 }
 

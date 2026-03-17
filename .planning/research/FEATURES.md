@@ -1,133 +1,152 @@
 # Feature Research
 
-**Domain:** Science content curation and Instagram carousel generation (CLI agent)
-**Researched:** 2026-03-15
-**Confidence:** MEDIUM-HIGH (Instagram specs HIGH; content automation patterns MEDIUM; citation safety HIGH)
+**Domain:** Science content curation and Instagram carousel generation (CLI agent + web UI renderer)
+**Researched:** 2026-03-17 (v1.1 web UI update; v1.0 CLI features preserved below)
+**Confidence:** HIGH (Instagram specs, safe zones, typography); MEDIUM (carousel tool patterns, font pairing); LOW (export fidelity edge cases)
 
 ---
 
-## Feature Landscape
+## Context: What Already Exists (v1.0 CLI — SHIPPED)
+
+The `/science` skill generates markdown files in `output/` with:
+- 5-7 slides (title + body text per slide)
+- Instagram caption (400-600 words)
+- Exactly 5 hashtags
+- Full APA citations with DOIs and URLs
+- Source image URLs
+- Color scheme section (4 hex colors: background, primary text, accent, highlight + palette name + rationale)
+
+This research covers **only new features** for v1.1: the local web UI that converts those markdown files into export-ready 1080x1080 PNG carousel images.
+
+---
+
+## Feature Landscape — Web UI Carousel Image Generator
 
 ### Table Stakes (Users Expect These)
 
-Features where absence breaks the daily workflow entirely. These are non-negotiable for the tool to be usable.
+Features whose absence makes the tool feel broken or incomplete. Users give no credit for having them but immediately notice their absence.
 
 | Feature | Why Expected | Complexity | Notes |
 |---------|--------------|------------|-------|
-| Fetch from reputable science sources (Nature, Science Daily, arXiv, PubMed) | Core promise of the tool — without live source fetching it's just a text generator | MEDIUM | Claude Code web fetch/search covers this without external API keys; arXiv has open API, PubMed has E-utilities with 3 req/sec unauthenticated |
-| Auto-pick trending/recent science topic | User invokes tool daily with no topic in mind; must produce something without input | MEDIUM | "Trending" in science = recently published, high-citation velocity, or picked up by science news outlets — recency signal is the primary sort key |
-| Accept user-specified topic as override | User has something specific in mind; no topic input mode only is too rigid | LOW | Simple CLI argument or prompt input — "run for quantum computing today" |
-| Generate 5-7 carousel slides with chunked text | Instagram carousel format is the deliverable; fewer = not enough depth, more = abandoned before CTA | MEDIUM | Each slide = one idea. Hook slide + 3-5 body slides + CTA/citation slide. Never cram two ideas per slide. |
-| Strong hook on slide 1 | Instagram algorithm rewards swipe-through completion rate; weak slide 1 = nobody sees the rest | LOW | Under 10 words. Answers "Is this for me?" and "What do I get?" immediately. Compelling question or surprising fact. |
-| Instagram caption with full summary | Caption is where depth lives — slide text = hook, caption = substance | LOW | ~2200 char max. Treat as a mini blog post. Main keyword in first sentence. |
-| Exactly 5 relevant hashtags | Instagram currently limits to 5 hashtags per post; generating more is actively wrong | LOW | Instagram limit verified 2026. Fewer, more relevant hashtags outperform shotgun approaches. |
-| Full academic citations (APA/Harvard with DOIs and authors) | Academic credibility is the entire value prop — sourcing is what separates this from random science content | MEDIUM | Every factual claim traceable to source. DOIs are canonical identifiers. Include publication date. |
-| Clickable source URLs alongside citations | Users need to link-check before posting; audience may want to go deeper | LOW | Direct URL to paper or article. Separate from DOI when DOI resolver and landing page differ. |
-| Casual + authoritative tone output | Matches the "did you know" / Kurzgesagt register that drives saves on educational Instagram | MEDIUM | Tone is a prompt engineering concern — must be consistent across all slide text and caption. Avoid jargon without explanation. |
-| Output as clean plain text (copy-paste ready) | User handles design manually — output must be directly usable without post-processing | LOW | No markdown rendering artifacts, no HTML. Each slide clearly labeled (Slide 1, Slide 2, etc.). |
+| Markdown file loading | Without this, the tool has no input — it's a canvas with no content | LOW | File input `<input type="file">` or drag-and-drop; parse slide sections by `## Slide N:` headers |
+| Live preview of all slides | Any design tool without real-time feedback feels broken; user needs to see the result as they edit | MEDIUM | Render a visible 1080x1080px canvas per slide; updates reflect edits instantly |
+| Color palette pre-loaded from markdown | The `/science` output already includes a 4-color palette — not reading it forces manual re-entry and wastes the existing output contract | LOW | Parse the `## Color Scheme` section for hex values; use as initial canvas background, text, accent, highlight |
+| Per-slide text display (title + body) | Core content rendering — a slide must show the slide title and body text the skill generated | LOW | Map `## Slide N: Title` to the slide heading; paragraph text below it to the body area |
+| Font selection | Every carousel tool offers font control; without it the output looks like a browser default | MEDIUM | Provide at minimum 3-4 pre-curated font pairings; loading from Google Fonts API is standard |
+| Color override controls | User may not like the auto-palette; must be able to change any of the 4 color roles | LOW | Color pickers mapped to background, primary text, accent, highlight roles |
+| PNG export per slide | The output format Instagram requires; without export the tool produces nothing usable | MEDIUM | Export each slide as a 1080x1080 PNG; filename pattern: `topic-slide-01.png` |
+| ZIP bundle export | Users need all slides as a package — downloading 6 slides individually is unusable friction | LOW | Bundle all PNGs via JSZip or similar; single "Export All" button |
+| Slide navigation (prev/next) | Multiple slides exist; user must be able to move between them | LOW | Previous/next buttons; slide counter ("Slide 2 of 6") |
+| Consistent visual structure across slides | If each slide looks independent, the carousel loses visual cohesion — swipe continuity is broken | MEDIUM | Shared background color, same font, same padding rules across all slides in a session |
 
 ### Differentiators (Competitive Advantage)
 
-Features that set this tool apart from generic carousel generators and make the daily workflow genuinely superior.
+Features that make this tool feel premium rather than generic, aligned to the science content niche.
 
 | Feature | Value Proposition | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| Source-grounded generation only (no hallucinated citations) | AI citation hallucination rates reach 40-91% in studies — science content that cites fabricated papers destroys credibility permanently | HIGH | Tool must fetch actual source content first, then generate from that content. Citations must come from fetched URLs, not LLM memory. This is the single most important differentiator for a science account. |
-| Multi-source cross-validation per topic | Single-source stories may be preliminary or retracted; cross-referencing improves accuracy | MEDIUM | Pull from both academic source (arXiv/PubMed) and science journalism (Nature News, Science Daily) for the same finding. Flag when only one source found. |
-| Source image URL extraction | User needs visuals for each slide; manually hunting images from the original article wastes the time saved elsewhere | LOW | Extract og:image or article header image URL from each source. User can grab the image directly. |
-| Field-spanning topic selection (not AI-only) | Science accounts covering only one field plateau fast; cross-field coverage (physics, biology, space, medicine, chemistry) keeps audience diverse | MEDIUM | Default auto-pick should span fields. Track which fields were covered in recent outputs to avoid repetition. |
-| Slide-level engagement optimization | Each slide text chunk designed for completion rate (dwell time), not just information transfer — swipe-through completion is a ranking signal | MEDIUM | Slide 2 must create a cliff-hanger that pulls to slide 3. Body slides should end mid-thought or pose a question. Final slide = payoff + CTA. |
-| Recency-first source selection | Science credibility depends on currency — a "discovery" from 2021 presented as new is misleading | LOW | Filter sources to last 7-30 days. Flag if no recent content found for a topic and suggest adjacent topics. |
-| Topic diversity tracking across sessions | Daily use creates repetition risk — same topics, same fields | MEDIUM | Simple log of recently covered topics/fields. Warn if proposed topic was covered within last 14 days. |
+| Curated science-appropriate font pairings | Generic carousel tools use one-size-fits-all fonts; science content needs editorial credibility — the right typeface signals authority without feeling stiff | MEDIUM | Pre-build 3-4 named pairings: e.g., "Editorial" (DM Serif Display + Inter), "Modern Lab" (Space Grotesk + Source Sans Pro), "Classic Authority" (Libre Baskerville + Lato). Let user pick a pairing, not raw font names. |
+| Slide role awareness (hook, body, CTA) | A hook slide needs a different visual weight than a body slide — generic tools apply one layout to all slides; role-aware layout makes the first slide pop and the CTA slide feel conclusive | HIGH | Slide 1 gets larger title font, centered layout, minimal body text. Body slides get smaller title, more body text area. Last slide gets CTA-optimized layout with follow prompt. |
+| Text editing inline on the canvas | The generated slide text may be too long (~150 chars body text per the known verbosity concern) — the user needs to trim it without leaving the tool | MEDIUM | Contenteditable overlay on the rendered text; edits immediately re-render. Do not require a separate text input panel. |
+| Color palette named schemes | Rather than 4 random color pickers, offer named "Scheme presets" (e.g., "Deep Space", "Clean Lab", "Forest Biology") that set all 4 roles at once. The `/science` output already names the palette — display that name and offer it as a loadable preset. | MEDIUM | A palette is 4 hex values. Load named schemes as JSON. User can fine-tune after loading. |
+| Slide indicator dots preview strip | Shows all slides as thumbnail chips along the bottom — user sees the visual flow of the full carousel at a glance before exporting | MEDIUM | Small 120x120px canvas previews in a horizontal strip; clicking navigates to that slide |
+| Safe zone visual overlay toggle | Instagram overlays UI on the bottom ~150px (action buttons) and top ~120px on some devices — exposing this as a toggleable guide prevents content placement mistakes | LOW | Render a semi-transparent overlay on top of the canvas preview showing the unsafe zones; toggle on/off |
+| Verbosity-aware text truncation hint | The known concern: body text at ~150 chars may be too long for comfortable slide reading. Surface a character count warning if body text exceeds 120 chars and suggest trimming. | LOW | Count characters in the body text area; show amber warning at 120, red at 160. Complements inline editing. |
+| Source image display (metadata panel) | The markdown output includes source image URLs; the UI should display them as reference images so the user can decide whether to incorporate them into the design externally | LOW | Below the slides, render a panel showing the source image URLs as `<img>` thumbnails. Read-only, not placed on canvas — they're attribution references and may have unclear licenses. |
 
 ### Anti-Features (Commonly Requested, Often Problematic)
 
-Features that seem like natural additions but create scope creep, technical risk, or contradict the tool's constraints.
+Features that appear on typical carousel tool feature lists but should be explicitly avoided for this tool.
 
 | Feature | Why Requested | Why Problematic | Alternative |
 |---------|---------------|-----------------|-------------|
-| Automated Instagram posting | "Why not just post it for me?" — saves manual publishing step | Requires Instagram Graph API credentials, OAuth token management, and ongoing token refresh — violates the no-external-API-keys constraint. Also removes human review before posting, which is essential for science accuracy. | Output is copy-paste ready. User reviews and posts manually — this is intentional quality control, not a limitation. |
-| Image/graphic generation | Users want fully designed slides, not just text | Image generation requires DALL-E, Stable Diffusion, or Canva API — all external API keys. Generated science imagery risks inaccuracy (wrong diagrams, misleading visuals). | Provide source image URLs. User designs slides using their own tool (Canva, Figma) with actual article images. |
-| Multi-topic batch generation | "Generate a week's worth at once" | Defeats the daily-freshness purpose; week-old content queued for later will feel stale. Also dramatically increases per-run cost and complexity. | Run daily. Recency is a feature, not a bug — today's best science story beats last Monday's. |
-| Auto-scheduling / content calendar | "Plan my week" | Requires persistent state, background jobs, and scheduler infrastructure — far beyond a CLI agent scope. | The tool is a daily CLI invocation. Simplicity is its robustness. |
-| Sentiment/controversy filtering | "Don't show me politically sensitive topics" | Science credibility requires following evidence, not audience comfort. Filtering by controversy risks creating a bubble that undermines the account's scientific authority. | User reviews output before posting. That review step is the filter. |
-| Full article summarization (1000+ words) | "Give me the whole paper" | Instagram caption max is ~2200 chars. Long output is never used and wastes generation time. | Caption is the depth layer (~400-600 words). Link to source for full content. |
-| SEO keyword optimization | "Optimize for search" | Instagram is a discovery platform driven by engagement signals, not keyword indexing. Optimizing for keywords degrades the natural, credible tone. | Hashtag selection + clear topic focus handles discoverability. |
+| Drag-and-drop element repositioning on canvas | Feels like a full design tool (Canva-like); user thinks they want infinite layout control | Implementing a full drag-and-drop canvas (fabric.js or similar) multiplies complexity 5-10x. This is a renderer for a fixed content format — the slides are pre-structured by the skill. Layout chaos breaks visual cohesion across the carousel. | Offer 2-3 fixed layout presets (centered, left-aligned, split image/text) that maintain carousel consistency. Let the layout choice be intentional, not per-element. |
+| AI image generation on-slide | "Generate a relevant image for each slide" | Requires external API (DALL-E, Stability AI) — violates the no-external-API-keys constraint. Also risks inaccurate science diagrams. | Source image URLs are already in the markdown output. User can add images manually in their own tool if needed. |
+| Direct Instagram publishing from the UI | "One-click post after export" | Requires Instagram Graph API + OAuth flow — external API, external accounts, violates constraints. Also skips the human review step that is intentional quality control for science accuracy. | Output is download-to-device PNGs. User reviews then posts manually. |
+| Free-form canvas (blank slide creation) | "Let me make slides from scratch" | Contradicts the tool's purpose: rendering the `/science` skill's structured output. A blank canvas duplicates Canva without Canva's template library or asset management. | The tool renders what the skill generates. If user wants to design from scratch, they should use Canva or Figma. |
+| Animation / GIF / video export | "Animated carousels perform better" | Requires a canvas recording pipeline (ffmpeg, WebCodecs) — significant complexity spike. Instagram static carousels remain the primary format; video is a separate content type. | Static PNG export is the format. Reels/video is out of scope for v1.1 per PROJECT.md. |
+| Multi-file batch rendering | "Process all my output files at once" | Defeats daily-freshness purpose; also makes the UX more complex (file list management, batch export status). | Load one file at a time. Daily workflow means one markdown file per session. |
+| Template marketplace or save/load templates | "Let me save my design for reuse" | Requires persistent storage (localStorage at minimum, server at scale). For a single daily-use tool this is premature. The color scheme in the markdown IS the reusable brand config. | The `/science` skill outputs consistent color schemes. Load the same palette every day — that IS the template. |
 
 ---
 
 ## Feature Dependencies
 
 ```
-[Source fetching (arXiv/PubMed/news)]
-    └──required by──> [Slide text generation]
-    └──required by──> [Caption generation]
-    └──required by──> [Citation generation]
-    └──required by──> [Source image URL extraction]
-    └──required by──> [Source-grounded citation accuracy]
+[Markdown file loading]
+    └──required by──> [Color palette pre-load]
+    └──required by──> [Per-slide text display]
+    └──required by──> [Source image metadata panel]
+    └──required by──> [Verbosity-aware truncation hint]
 
-[Topic selection (auto-pick OR user-specified)]
-    └──required by──> [Source fetching]
+[Per-slide text display]
+    └──required by──> [Live preview]
+    └──required by──> [Inline text editing]
+    └──required by──> [Slide role awareness]
+    └──required by──> [PNG export]
 
-[Slide text generation]
-    └──required by──> [Slide-level engagement optimization]
-    └──enhances──> [Caption generation] (caption summarizes what slides introduced)
+[Live preview]
+    └──required by──> [Slide indicator dots preview strip]
+    └──required by──> [Safe zone visual overlay toggle]
+    └──required by──> [PNG export] (what renders in preview is what exports)
 
-[Citation generation]
-    └──enhances──> [Caption generation] (citations embedded in caption)
-    └──requires──> [Source fetching] (citations must come from fetched content, not LLM memory)
+[Color palette pre-load]
+    └──enhances──> [Color override controls] (pre-loaded palette is the starting point for overrides)
+    └──enhances──> [Color palette named schemes] (auto-loaded palette name maps to a named scheme)
 
-[Topic diversity tracking]
-    └──enhances──> [Topic selection (auto-pick)] (prevents repetition across days)
-    └──conflicts with──> [Multi-topic batch generation] (batch undermines recency-first design)
+[Font selection]
+    └──requires──> [Curated font pairings] (pairing is the font selection mechanism)
+    └──enhances──> [Slide role awareness] (hook slide uses larger font weight from same pairing)
 
-[Hashtag generation]
-    └──requires──> [Topic selection] (hashtags derived from topic and field)
-    └──constrained by──> [Instagram 5-hashtag limit]
+[PNG export]
+    └──required by──> [ZIP bundle export] (ZIP bundles the individual PNGs)
+
+[Slide role awareness] ──conflicts with──> [Drag-and-drop element repositioning]
+    (role-aware fixed layouts and free-form repositioning are incompatible design philosophies)
 ```
 
 ### Dependency Notes
 
-- **Source fetching requires topic selection:** You cannot fetch without knowing what to fetch. Topic selection (auto or manual) is the root of the entire pipeline.
-- **Citation generation requires source fetching:** Citations must be derived from actually fetched URLs, not generated from LLM training memory. This is the critical safety constraint — LLM-hallucinated citations are wrong 40-91% of the time in research contexts.
-- **Caption generation enhances from slide text:** The caption is a summary and expansion of what the slides introduced — slides and caption must be generated from the same source content in the same pass.
-- **Topic diversity tracking enhances auto-pick:** Optional but high-value for daily use. Without it, the same field (e.g., space) tends to dominate because space news is reliably high-volume.
-- **Batch generation conflicts with recency-first design:** Generating content in advance undermines the core value of "latest findings" — a cached story 5 days old is not this week's news.
+- **Markdown loading is the root dependency:** Everything else derives from parsed markdown content. This must be the first thing that works.
+- **Live preview gates export quality:** The PNG export must render exactly what the preview shows — use the same canvas/renderer path for both. A mismatch between preview and export is the most common failure mode in carousel tools.
+- **Color pre-load requires correct markdown parsing:** The `/science` output has a specific `## Color Scheme` section format. The parser must handle the exact structure the skill produces — read `output/2026-03-16-crispr-gene-editing.md` as the reference format.
+- **Slide role awareness conflicts with free-form drag/drop:** Picking one requires rejecting the other. This tool should commit to role-aware fixed layouts.
 
 ---
 
 ## MVP Definition
 
-### Launch With (v1)
+### Launch With (v1.1 — this milestone)
 
-Minimum viable product that proves the daily workflow actually saves time and produces usable output.
+Minimum that makes the web UI genuinely usable for the daily workflow.
 
-- [ ] Auto-pick trending science topic from recent news/academic sources — validates that the tool can operate unsupervised
-- [ ] Accept user-specified topic as CLI input — covers the most common intentional use case
-- [ ] Fetch from at least 2 source types: one news outlet (e.g., Science Daily or Ars Technica) + one academic (arXiv or PubMed) — dual-sourcing is the minimum credibility bar
-- [ ] Generate 5-7 labeled slide text chunks — the actual deliverable; each slide one idea, hook on slide 1
-- [ ] Generate Instagram caption (~400-600 words, keyword in first sentence) — the depth layer
-- [ ] Generate exactly 5 hashtags — constraint-compliant, non-negotiable
-- [ ] Provide full academic citations with DOIs and source URLs — credibility foundation
-- [ ] Extract at least one source image URL — removes the biggest manual step remaining
-- [ ] Output as plain text, cleanly labeled — copy-paste ready into design tool
+- [ ] Drag-and-drop (or file picker) markdown loading — the entry point
+- [ ] Parse slide sections, title, body text from markdown — the content extraction
+- [ ] Pre-load color palette from markdown `## Color Scheme` section — the integration point with v1.0
+- [ ] Render each slide as 1080x1080px canvas with background color, title, body text — the core visual output
+- [ ] Live preview updates when colors or fonts change — the interaction model
+- [ ] 2-3 curated font pairings selectable as named presets — the typography layer
+- [ ] Color override controls for all 4 color roles — the customization layer
+- [ ] Slide navigation (prev/next) — multi-slide browsing
+- [ ] Inline text editing on canvas (at least body text) — the verbosity fix workflow
+- [ ] PNG export per slide — the output
+- [ ] ZIP bundle export of all slides — the actual deliverable
 
-### Add After Validation (v1.x)
+### Add After Validation (v1.1.x)
 
-Add once core daily workflow is proven useful and being run regularly.
+After the basic render-and-export cycle is confirmed working in real daily use.
 
-- [ ] Multi-source cross-validation (compare arXiv + news outlet for same finding) — add when citation accuracy becomes the primary concern after initial use
-- [ ] Topic diversity tracking / recent-topics log — add when user notices field repetition after 1-2 weeks of daily use
-- [ ] Field-spanning auto-pick (explicit rotation across physics, biology, space, chemistry, medicine, tech) — add when auto-pick consistently skews toward one field
-- [ ] Slide-level engagement optimization (cliff-hanger endings on body slides) — add when baseline content is working and engagement rate becomes the next lever
+- [ ] Slide indicator dots preview strip — add when navigating more than 5 slides feels tedious
+- [ ] Safe zone visual overlay toggle — add when user reports content being clipped by Instagram UI
+- [ ] Verbosity-aware character count warning — add when the known text-length concern surfaces in real output
+- [ ] Slide role awareness (hook/body/CTA layout variants) — add when user notices visual monotony across slides
+- [ ] Source image metadata panel — add when user wants quick reference to source images during design
 
 ### Future Consideration (v2+)
 
-Features to defer until the daily habit is established and the account is growing.
-
-- [ ] Reels repurposing (reformat carousel content as 30-45s video script) — defer until carousel-first strategy is validated and user wants to expand formats
-- [ ] Multiple carousel outputs per run (e.g., 3 candidate topics to choose from) — defer until user finds single-topic output too limiting
-- [ ] Output format templating (user-defined slide structure preferences) — defer until user has strong opinions about structure from real use
+- [ ] Named color scheme presets (e.g., "Deep Space", "Clean Lab") — when user accumulates enough sessions to want a brand palette library
+- [ ] Layout presets (centered, left-aligned, split) — when user wants more visual variety without free-form drag/drop
+- [ ] Thumbnail strip export (one image showing all slides) — for Instagram Story preview or portfolio use
 
 ---
 
@@ -135,67 +154,98 @@ Features to defer until the daily habit is established and the account is growin
 
 | Feature | User Value | Implementation Cost | Priority |
 |---------|------------|---------------------|----------|
-| Source fetching (news + academic) | HIGH | MEDIUM | P1 |
-| Topic auto-pick | HIGH | MEDIUM | P1 |
-| User-specified topic input | HIGH | LOW | P1 |
-| 5-7 slide text generation | HIGH | MEDIUM | P1 |
-| Hook slide optimization | HIGH | LOW | P1 |
-| Instagram caption generation | HIGH | LOW | P1 |
-| Exactly 5 hashtags | HIGH | LOW | P1 |
-| Full academic citations with DOIs + URLs | HIGH | MEDIUM | P1 |
-| Source image URL extraction | MEDIUM | LOW | P1 |
-| Plain text labeled output | HIGH | LOW | P1 |
-| Source-grounded generation (no hallucinated citations) | HIGH | HIGH | P1 — safety-critical |
-| Multi-source cross-validation | HIGH | MEDIUM | P2 |
-| Field-spanning topic rotation | MEDIUM | MEDIUM | P2 |
-| Topic diversity tracking across sessions | MEDIUM | LOW | P2 |
-| Slide-level engagement optimization | MEDIUM | MEDIUM | P2 |
-| Recency filter (last 7-30 days) | MEDIUM | LOW | P2 |
-| Reels script repurposing | LOW | MEDIUM | P3 |
-| Multi-candidate topic output | LOW | MEDIUM | P3 |
-| Output format templating | LOW | LOW | P3 |
+| Markdown file loading + parsing | HIGH | LOW | P1 |
+| Per-slide canvas render (1080x1080) | HIGH | MEDIUM | P1 |
+| Color palette pre-load from markdown | HIGH | LOW | P1 |
+| Live preview | HIGH | MEDIUM | P1 |
+| Curated font pairings (3-4 presets) | HIGH | MEDIUM | P1 |
+| Color override controls | MEDIUM | LOW | P1 |
+| Slide navigation | HIGH | LOW | P1 |
+| Inline text editing on canvas | HIGH | MEDIUM | P1 — addresses known verbosity concern |
+| PNG export per slide | HIGH | MEDIUM | P1 |
+| ZIP bundle export | HIGH | LOW | P1 |
+| Slide indicator dots preview strip | MEDIUM | MEDIUM | P2 |
+| Safe zone visual overlay toggle | MEDIUM | LOW | P2 |
+| Verbosity character count warning | MEDIUM | LOW | P2 |
+| Slide role awareness (hook/body/CTA) | MEDIUM | HIGH | P2 |
+| Source image metadata panel | LOW | LOW | P2 |
+| Named color scheme presets | LOW | LOW | P3 |
+| Layout presets (centered/left/split) | MEDIUM | MEDIUM | P3 |
 
 **Priority key:**
-- P1: Must have for launch — workflow fails without it
-- P2: Should have — adds meaningful reliability/quality after core is working
-- P3: Nice to have — future value, defer until product-market fit
+- P1: Must have for v1.1 launch — the daily workflow fails without it
+- P2: Should have — adds meaningful quality; add when P1 is stable
+- P3: Nice to have — defer until v1.1 is in daily use
+
+---
+
+## Design Principles for the Renderer
+
+These are not features but constraints that drive feature implementation quality. Violating them produces "generic AI output" feel.
+
+### Typography Hierarchy (what makes slides feel premium)
+
+- **Headline font size:** 52-64px for hook slide (Slide 1), 36-44px for body slides. Size contrast between hook and body slides signals narrative progression.
+- **Body text size:** 22-26px. At 1080px canvas, this maps to roughly 14-16pt print equivalent — readable when Instagram compresses to ~375px display width.
+- **Line length:** 6-8 words per line maximum. The known ~150-char body text needs wrapping at ~40-50 chars per line — enforce this in the renderer.
+- **Line height:** 1.4-1.6x font size. Tight line-height (1.1x) is the most common reason science carousel text feels dense and unreadable.
+- **Recommended pairing for science/authority:** DM Serif Display (headings) + Inter (body) — editorial weight without formality. Alternative: Space Grotesk (headings) + Source Sans Pro (body) — modern lab aesthetic.
+
+### Layout Safe Zones (Instagram-verified)
+
+- **Top margin:** 120px minimum (Instagram overlays profile info on smaller devices)
+- **Bottom margin:** 150px minimum (like/comment/share buttons overlay this area)
+- **Side margins:** 80px minimum on each side (Instagram crops at 1:1 on feed; side content safe zone is narrower than top/bottom)
+- **Content area:** Effective usable canvas = 920x810px within the 1080x1080 frame
+- **60/40 rule:** Target 60% empty space, 40% content. Science slides at 150 chars body text tend to violate this — inline editing is the corrective mechanism.
+
+### Color Application
+
+- **Background:** Most of the canvas. The 4-hex palette from the skill assigns this role explicitly.
+- **Primary text:** Body and headline text. Must meet 4.5:1 contrast ratio against background (WCAG AA).
+- **Accent:** Decorative elements — slide number, divider lines, icon if used.
+- **Highlight:** Used sparingly — a word callout, a pull quote, the CTA text on the final slide.
 
 ---
 
 ## Competitor Feature Analysis
 
-These tools represent the current state of the art for automated carousel generation. None are built for science-specific academic accuracy — that gap is the opportunity.
+| Feature | Canva (general design) | PostNitro / aiCarousels (carousel generators) | This tool (Pleiades web UI) |
+|---------|----------------------|----------------------------------------------|----------------------------|
+| Input source | User brings text; templates | AI generates text from topic | Reads `/science` markdown output |
+| Color integration | Manual; brand kit upload | Brand kit or manual | Auto-loads from markdown color scheme |
+| Typography | Hundreds of fonts, overwhelming | Curated pairings per template | 3-4 named science-appropriate pairings |
+| Slide role awareness | None — one template for all slides | None | Planned: hook/body/CTA layout variants |
+| Export format | PNG, PDF | PNG, PDF | PNG per slide + ZIP |
+| Canvas size | Any; 1080x1080 available | Native 1080x1080 | Fixed 1080x1080 (Instagram square) |
+| Source citation display | None | None | Source image panel; citation preserved in markdown |
+| Inline text edit | Full drag/drop canvas | Limited inline | Contenteditable overlay on text regions |
+| Local / no-account | No (SaaS) | No (SaaS) | YES — local HTML/JS, no server, no login |
+| Science content niche | Not optimized | Not optimized | Purpose-built for `/science` skill output |
 
-| Feature | PostNitro / aiCarousels (generic carousel tools) | Paper Digest / ArXiv Pulse (academic digest tools) | Project Pleiades (this tool) |
-|---------|------|------|------|
-| Topic sourcing | User-provided topic or URL | arXiv/PubMed search by user interest | Auto-pick from news + academic sources, or user-specified |
-| Citation accuracy | None — generates from LLM memory | Fetches actual papers, cites accurately | Generates only from fetched source content |
-| Instagram formatting | Native — carousel slides, captions, hashtags | None — research digest format only | Native — slide chunks, caption, exactly 5 hashtags |
-| Academic citations | None — entertainment/marketing focus | YES — paper metadata, DOI links | YES — APA/Harvard citations with DOIs and URLs |
-| Image sourcing | AI-generated or user-uploaded | None | Source image URL extraction from articles |
-| Tone control | Brand voice (marketing) | Academic/neutral | Casual + authoritative ("did you know" / Kurzgesagt) |
-| CLI / no-account workflow | No — SaaS only, requires login | Limited — web-only interfaces | YES — runs inside Claude Code, no external accounts |
-| Daily cadence design | Batch scheduling available | Email digest (daily/weekly) | Single invocation per day, recency-first |
-| Field coverage | Any topic | By researcher interest | All science fields, rotation encouraged |
-
-**Key insight:** No existing tool combines (a) live academic source fetching, (b) citation-safe generation, and (c) Instagram-native output formatting. Generic carousel tools have the Instagram formatting but no science credibility. Academic digest tools have the sourcing but no social content formatting. Pleiades fills the intersection.
+**Key gap this tool fills:** No existing local, no-account tool reads a structured science markdown and renders it directly into Instagram-ready images with the palette already included in the source file. The closest is Canva but it requires manual re-entry of all content and colors, and has no concept of the `/science` output contract.
 
 ---
 
 ## Sources
 
-- PostNitro feature set and pricing: [PostNitro](https://postnitro.ai/) — MEDIUM confidence (vendor site)
-- aiCarousels vs Contentdrips comparison: [Contentdrips aiCarousels alternative](https://contentdrips.com/aicarousels-alternative/) — MEDIUM confidence
-- Instagram carousel best practices 2026: [Metricool](https://metricool.com/instagram-carousels/), [TrueFuture Media](https://www.truefuturemedia.com/articles/instagram-carousel-strategy-2026) — HIGH confidence (current-year verified)
-- Instagram carousel slide count and engagement data: [PostNitro carousel post guide](https://postnitro.ai/blog/post/instagram-carousel-post), [StackInfluence](https://stackinfluence.com/what-are-instagram-carousels-2026-guide/) — MEDIUM confidence
-- Instagram hashtag limit (5): [PROJECT.md context] — HIGH confidence (verified constraint)
-- AI citation hallucination rates: [Enago Academy — 40% error rate](https://www.enago.com/academy/ai-hallucinations-research-citations/), [INRA.AI blog](https://www.inra.ai/blog/citation-accuracy), [PMC hallucination study](https://pmc.ncbi.nlm.nih.gov/articles/PMC10726751/) — HIGH confidence (multiple peer-reviewed sources)
-- arXiv API rate limits and terms: [arXiv API ToU](https://info.arxiv.org/help/api/tou.html) — HIGH confidence (official source)
-- PubMed E-utilities rate limits: [NCBI E-utilities intro](https://www.ncbi.nlm.nih.gov/books/NBK25497/) — HIGH confidence (official NCBI documentation)
-- Paper Digest and ArXiv Pulse features: [Paper Digest](https://www.paperdigest.org/), [ArXiv Pulse](https://www.arxivpulse.com/) — MEDIUM confidence
-- Instagram algorithm 2026 educational content: [Medium — Instagram algorithm 2026](https://medium.com/@daniel.belhart/what-the-instagram-algorithm-in-2026-actually-prioritizes-and-how-creators-can-use-it-2a48b893e1c8) — LOW-MEDIUM confidence (single source, third-party analysis)
-- Science communication carousel structure: [Creators for Climate](https://www.creatorsforclimate.com/blog/from-posters-to-slides) — MEDIUM confidence
+- Instagram safe zones 2026: [Zeely Instagram safe zones](https://zeely.ai/blog/master-instagram-safe-zones/), [SocialRails text overlays guide](https://socialrails.com/social-media-terms/text-overlays-on-instagram-carousels) — HIGH confidence
+- Instagram carousel dimensions: [PostNitro dimensions guide](https://postnitro.ai/blog/post/instagram-carousel-dimensions-your-ultimate-guide), [Pano size guide](https://panocollages.com/blog/instagram-carousel-size-guide-dimensions-for-perfect-posts) — HIGH confidence
+- Typography sizing for Instagram carousels: [PostNitro typography guide](https://postnitro.ai/blog/post/carousel-typography-guide-perfecting-font-sizes-and-spacing) — MEDIUM confidence
+- Font pairings for educational/science content: [OrangeBlue Web Google Fonts 2025](https://orangeblueweb.com/best-google-fonts-in-2025-20-modern-serif-sans-serif-combos-that-convert-visitors-into-customers/), [Predis carousel design tools](https://predis.ai/resources/instagram-carousel-design-tool/) — MEDIUM confidence
+- Carousel design best practices: [Pano 15 design tips](https://panocollages.com/blog/15-design-tips-for-eye-catching-instagram-carousels), [Hootsuite Instagram carousel guide](https://blog.hootsuite.com/instagram-carousel/) — MEDIUM confidence
+- PNG export rendering: html2canvas vs puppeteer comparison: [npm-compare](https://npm-compare.com/dom-to-image,html2canvas,puppeteer), [portalZINE best HTML to canvas 2025](https://portalzine.de/best-html-to-canvas-solutions-in-2025/) — MEDIUM confidence
+- Competitor feature sets: [PostNitro](https://postnitro.ai/carousels/instagram), [aiCarousels](https://www.aicarousels.com/), [Canva carousel templates](https://www.canva.com/instagram-posts/templates/carousel/) — MEDIUM confidence (vendor sites)
+- Layout 60/40 whitespace principle: [Pano design tips](https://panocollages.com/blog/15-design-tips-for-eye-catching-instagram-carousels) — MEDIUM confidence
+- Source markdown format reference: `output/2026-03-16-crispr-gene-editing.md` — HIGH confidence (actual output file)
 
 ---
-*Feature research for: Science content curation and Instagram carousel generation (Project Pleiades)*
-*Researched: 2026-03-15*
+
+## Prior v1.0 CLI Feature Research
+
+The full feature landscape for the v1.0 CLI skill (source fetching, citation grounding, slide text generation, caption, hashtags, topic diversity) is preserved in git history at commit `34e1833`. The above replaces and extends that file for the v1.1 web UI milestone.
+
+---
+
+*Feature research for: Science content curation and Instagram carousel generation — v1.1 web UI (Project Pleiades)*
+*Researched: 2026-03-17*

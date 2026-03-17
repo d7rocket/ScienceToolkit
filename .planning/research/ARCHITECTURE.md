@@ -1,8 +1,10 @@
 # Architecture Research
 
-**Domain:** Claude Code skill — web research to structured carousel output
-**Researched:** 2026-03-15
-**Confidence:** HIGH (verified against official Claude Code docs and multiple real-world pipeline examples)
+**Domain:** Local web UI carousel image generator — markdown-to-PNG rendering pipeline
+**Researched:** 2026-03-17
+**Confidence:** HIGH for core patterns (verified against MDN, npm docs, official library docs); MEDIUM for rendering pipeline tradeoffs (community sources, multiple-source agreement)
+
+---
 
 ## Standard Architecture
 
@@ -10,333 +12,443 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      INVOCATION LAYER                            │
-│  User types: /science [topic?]  →  SKILL.md dispatched          │
-├─────────────────────────────────────────────────────────────────┤
-│                    ORCHESTRATION LAYER                           │
+│                         EXISTING SYSTEM                          │
+│   /science skill  →  output/YYYY-MM-DD-[slug].md               │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │  markdown file (read-only input)
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     WEB UI ENTRY LAYER                           │
+│   Vite + React (local dev server, no backend needed)            │
+│   Drag & drop  OR  File picker  →  FileReader.readAsText()      │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │  raw markdown string
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      PARSE LAYER                                 │
 │  ┌──────────────────────────────────────────────────────────┐   │
-│  │               SKILL.md  (entry point)                     │   │
-│  │  - Reads $ARGUMENTS (optional topic)                      │   │
-│  │  - Branches: auto-topic vs user-topic                     │   │
-│  │  - Spawns parallel research subagents                     │   │
-│  │  - Collects and deduplicates results                      │   │
-│  │  - Delegates to content generation phase                  │   │
+│  │  markdownToSlides(rawMd) → CarouselDoc                   │   │
+│  │  - gray-matter: strip YAML frontmatter (future use)      │   │
+│  │  - regex section splitter: ## Slide N, ## Caption, etc.  │   │
+│  │  - slide text extractor                                  │   │
+│  │  - color scheme extractor (requires skill update)        │   │
 │  └──────────────────────────────────────────────────────────┘   │
-├──────────────┬──────────────┬──────────────────────────────────┤
-│  SOURCE      │  SOURCE      │  SOURCE                           │
-│  SUBAGENT A  │  SUBAGENT B  │  SUBAGENT C                       │
-│  (News)      │  (Academic)  │  (Trending)                       │
-│              │              │                                   │
-│  WebFetch:   │  WebFetch:   │  WebSearch:                       │
-│  - Nature    │  - arXiv     │  - trending                       │
-│  - SciDaily  │  - PubMed    │    science                        │
-│  - Ars Tech  │              │    [date]                         │
-│  - New Sci   │              │                                   │
-└──────┬───────┴──────┬───────┴──────────────┬────────────────────┤
-       │              │                      │                    │
-├──────▼──────────────▼──────────────────────▼────────────────────┤
-│                    PROCESSING LAYER                              │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │            SELECTION & SCORING                            │   │
-│  │  - Deduplicate across sources (title similarity)          │   │
-│  │  - Score: recency × source quality × carousel potential   │   │
-│  │  - Pick best 1 candidate (or honour user topic)           │   │
-│  └──────────────────────────────────────────────────────────┘   │
-├─────────────────────────────────────────────────────────────────┤
-│                    GENERATION LAYER                              │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │               CONTENT GENERATOR                           │   │
-│  │  - Reads full source article via WebFetch                 │   │
-│  │  - Writes 5-7 carousel slide chunks                       │   │
-│  │  - Writes Instagram caption (~2200 chars)                 │   │
-│  │  - Writes exactly 5 hashtags                              │   │
-│  │  - Formats APA/Harvard citations with DOIs                │   │
-│  │  - Collects source image URLs                             │   │
-│  └──────────────────────────────────────────────────────────┘   │
-├─────────────────────────────────────────────────────────────────┤
-│                     OUTPUT LAYER                                 │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │           Structured Markdown File Written to Disk        │   │
-│  │  output/YYYY-MM-DD-[slug].md                              │   │
-│  └──────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+└──────────────────────────────┬──────────────────────────────────┘
+                               │  CarouselDoc (typed)
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      STATE LAYER (Zustand)                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌─────────────────────┐   │
+│  │ carouselStore│  │ designStore  │  │  uiStore            │   │
+│  │ - slides[]   │  │ - palette    │  │  - activeSlideIndex │   │
+│  │ - caption    │  │ - fontPair   │  │  - isExporting      │   │
+│  │ - hashtags   │  │ - spacing    │  │  - sidebarTab       │   │
+│  │ - sources    │  │ - textSizes  │  │                     │   │
+│  └──────────────┘  └──────────────┘  └─────────────────────┘   │
+└───────────┬────────────────────┬───────────────────────────────┘
+            │                    │
+            ▼                    ▼
+┌──────────────────┐  ┌─────────────────────────────────────────┐
+│  EDITOR PANEL    │  │           PREVIEW PANEL                  │
+│  (sidebar)       │  │  SlideCanvas (hidden off-screen)         │
+│  - PaletteEditor │  │  - 1080x1080 canvas element              │
+│  - FontPicker    │  │  - CSS transform scale() for preview     │
+│  - TextEditor    │  │  - renders from designStore + slides[]   │
+│  - SlideNav      │  │                                          │
+└──────────────────┘  └─────────────────┬─────────────────────────┘
+                                         │  canvas.toBlob()
+                                         ▼
+                       ┌─────────────────────────────────────────┐
+                       │           EXPORT LAYER                   │
+                       │  - toPng(slideEl, { width:1080,         │
+                       │            height:1080, pixelRatio:1 }) │
+                       │  - individual PNG download              │
+                       │  - JSZip bundle → .zip download         │
+                       └─────────────────────────────────────────┘
 ```
 
 ### Component Responsibilities
 
 | Component | Responsibility | Implementation |
 |-----------|---------------|----------------|
-| `SKILL.md` | Entry point, argument parsing, orchestration | YAML frontmatter + markdown instructions |
-| `prompts/system.md` | Tone guide, output schema, Instagram constraints | Supporting file, loaded by SKILL.md |
-| `prompts/slides.md` | Detailed slide-writing instructions and examples | Supporting file, loaded on generation phase |
-| `prompts/citation.md` | Citation format rules (APA, DOI, URL structure) | Supporting file, loaded on generation phase |
-| `examples/output-sample.md` | Reference output showing desired format | Supporting file; teaches Claude expected shape |
-| News Subagent (inline) | Fetch + parse science news sites | Inline WebFetch calls coordinated by skill |
-| Academic Subagent (inline) | Query arXiv and PubMed search APIs | Inline WebFetch calls coordinated by skill |
-| Trending Subagent (optional) | Discover trending topics when no topic given | WebSearch call, used only in auto-pick mode |
-| Selection Logic | Score and pick the best story | Prose instructions in SKILL.md |
-| Content Generator | Transform source material into carousel output | Claude's native generation capability |
-| Output Writer | Persist structured markdown to `output/` | Bash write via `!` injection or Claude file write |
+| `App` | Layout shell, drop zone listener | React, Vite |
+| `markdownToSlides()` | Parse raw markdown into `CarouselDoc` | Custom parser (regex), gray-matter |
+| `carouselStore` | Source-of-truth for parsed slide content | Zustand slice |
+| `designStore` | User's design decisions (palette, fonts, spacing) | Zustand slice, initialized from parsed color scheme |
+| `uiStore` | Transient UI state (active slide, export progress) | Zustand slice |
+| `EditorPanel` | Design controls sidebar | React components |
+| `SlidePreview` | Scaled visual preview of active slide | Div-based, CSS transform |
+| `SlideCanvas` | Off-screen 1080x1080 canvas for export-quality render | `<canvas>` element, Canvas 2D API |
+| `ExportButton` | Triggers html-to-image capture per slide, JSZip bundle | html-to-image, JSZip |
+| `FontLoader` | Resolves font names → loaded `FontFace` objects before render | CSS Font Loading API (`document.fonts`) |
 
 ---
 
 ## Recommended Project Structure
 
 ```
-.claude/skills/science-carousel/
-├── SKILL.md                  # Entry point — frontmatter + orchestration instructions
-├── prompts/
-│   ├── system.md             # Tone, voice, Instagram format constraints
-│   ├── slides.md             # Slide-writing rules (hook, body, cliffhanger patterns)
-│   └── citation.md           # APA/Harvard + DOI + URL citation format
-├── examples/
-│   └── output-sample.md      # One full example of a complete carousel package
-└── output/                   # Generated carousel packages land here
-    └── .gitkeep
+web-ui/
+├── index.html                  # Vite entry point
+├── vite.config.ts              # Vite config (no plugins needed for MVP)
+├── src/
+│   ├── main.tsx                # React root
+│   ├── App.tsx                 # Layout, drag-drop entry
+│   ├── parse/
+│   │   ├── markdownToSlides.ts # Core parser — returns CarouselDoc
+│   │   └── types.ts            # CarouselDoc, Slide, ColorScheme interfaces
+│   ├── store/
+│   │   ├── carouselStore.ts    # Zustand: parsed content
+│   │   ├── designStore.ts      # Zustand: palette, font, spacing
+│   │   └── uiStore.ts          # Zustand: active slide, export state
+│   ├── components/
+│   │   ├── DropZone.tsx        # Drag & drop target + file picker
+│   │   ├── EditorPanel/
+│   │   │   ├── index.tsx       # Sidebar shell with tabs
+│   │   │   ├── PaletteEditor.tsx
+│   │   │   ├── FontPicker.tsx
+│   │   │   ├── TextEditor.tsx  # Per-slide text overrides
+│   │   │   └── SpacingEditor.tsx
+│   │   ├── PreviewPanel/
+│   │   │   ├── index.tsx       # Scaled preview shell
+│   │   │   ├── SlidePreview.tsx # CSS-scaled display version
+│   │   │   └── SlideNav.tsx    # Previous/next slide controls
+│   │   └── ExportBar.tsx       # Export buttons
+│   ├── renderer/
+│   │   ├── SlideCanvas.tsx     # Off-screen 1080x1080 canvas element
+│   │   ├── renderSlide.ts      # Canvas 2D draw logic (background, text, layout)
+│   │   └── fontLoader.ts       # FontFace API loading + document.fonts.ready
+│   ├── export/
+│   │   ├── exportPng.ts        # html-to-image toPng() per slide
+│   │   └── exportZip.ts        # JSZip bundle of all slide PNGs
+│   └── constants/
+│       ├── defaultDesign.ts    # Default palette, fonts, spacing values
+│       └── slideLayout.ts      # Layout constants (padding, font sizes, canvas size)
+└── public/
+    └── fonts/                  # Bundled fallback fonts if Google Fonts unavailable
 ```
 
 ### Structure Rationale
 
-- **`SKILL.md` as sole entry point:** Claude Code's skill system requires SKILL.md; all other files are supporting context loaded on demand. Keep it under 500 lines.
-- **`prompts/` separated by concern:** `system.md` (voice) is always loaded; `slides.md` and `citation.md` are loaded only during generation to avoid bloating the context during the research phase.
-- **`examples/output-sample.md`:** A single concrete example is the most efficient way to communicate output shape to Claude. One good example outperforms three paragraphs of instructions.
-- **`output/` co-located with skill:** Keeps generated content auditable and versioned alongside the skill that created it. Named `YYYY-MM-DD-[slug].md` for daily cadence.
-- **No `src/` or scripts subdirectory:** The skill relies entirely on Claude's native WebFetch/WebSearch tools and its own generation capability. No Python helpers needed for the MVP; they can be added later if source-specific parsing becomes complex.
+- **`parse/` isolated from components:** The markdown parser has no UI dependencies — it is a pure function. Isolated here it can be tested independently and reused from the export path.
+- **`renderer/` separate from `components/`:** The Canvas 2D rendering path (used for export) is distinct from the React component tree (used for preview). Separating them prevents the export path from accidentally depending on DOM/React rendering state.
+- **`store/` three slices:** Content (what is being rendered), design (how it looks), and UI (transient state). Separating them means a font change does not re-evaluate slide content, and export state does not pollute design state.
+- **`export/` isolated:** Export functions are side-effectful (trigger downloads). Isolating them makes it easier to test rendering without triggering downloads.
 
 ---
 
 ## Architectural Patterns
 
-### Pattern 1: Sequential Orchestration with Parallel Fetch
+### Pattern 1: Regex Section Splitter (no full AST needed)
 
-**What:** SKILL.md instructs Claude to spawn multiple research threads concurrently (using the `Task` tool or parallel WebFetch calls), then collect all results before proceeding to selection and generation. One orchestrator, many gatherers.
+**What:** Parse the structured markdown by splitting on `## Section Name` headers using a regex, then extracting content between consecutive section boundaries. No need for a full Markdown AST for this use case.
 
-**When to use:** Whenever multiple independent sources must be queried and latency matters. Research and content generation are the two natural phases — research can be parallelised, generation cannot (it depends on the chosen story).
+**When to use:** The markdown format is fixed and controlled by the `/science` skill. It does not require general-purpose markdown parsing — the section structure is predictable and stable. Full AST parsing (remark/unified) adds ~40kB of dependency weight for a problem that a 30-line regex parser solves adequately.
 
-**Trade-offs:** Faster than sequential fetching; slightly more complex orchestration instructions. Subagent isolation (`context: fork`) keeps research threads from polluting the main conversation context but adds per-invocation overhead. For a daily-cadence single-output skill, inline parallel calls (without full subagent forking) is the lighter approach.
+**Trade-offs:** Simpler and faster; brittle if the skill ever changes section headings. Mitigated by keeping the parser and the skill's output template in sync — a change to one requires a change to the other.
 
 **Example:**
-```yaml
----
-name: science-carousel
-description: Fetch latest science news and generate an Instagram carousel package
-context: fork
-agent: general-purpose
-allowed-tools: WebFetch, WebSearch, Write
----
+```typescript
+// parse/markdownToSlides.ts
+export function markdownToSlides(raw: string): CarouselDoc {
+  const lines = raw.split('\n');
+  const sections: Record<string, string[]> = {};
+  let current = '__header__';
 
-## Phase 1 — Research (run in parallel)
+  for (const line of lines) {
+    const match = line.match(/^## (.+)$/);
+    if (match) {
+      current = match[1]; // e.g. "Slide 1: Bacteria Just Lost..."
+      sections[current] = [];
+    } else {
+      sections[current] = [...(sections[current] ?? []), line];
+    }
+  }
 
-Search these sources simultaneously:
-1. WebFetch https://www.nature.com/news — extract top 3 headlines and URLs
-2. WebFetch https://www.sciencedaily.com — extract top 3 headlines and URLs
-3. WebSearch "latest science discovery $ARGUMENTS site:arxiv.org OR site:pubmed.ncbi.nlm.nih.gov"
+  const slides = Object.entries(sections)
+    .filter(([key]) => key.startsWith('Slide '))
+    .map(([key, body]) => ({
+      index: parseInt(key.match(/Slide (\d+)/)?.[1] ?? '0'),
+      title: key.replace(/^Slide \d+:\s*/, ''),
+      body: body.join('\n').trim(),
+    }));
 
-Collect all results before continuing.
-
-## Phase 2 — Selection
-...
+  return {
+    title: lines[0]?.replace(/^# /, '') ?? '',
+    slides,
+    caption: sections['Caption']?.join('\n').trim() ?? '',
+    hashtags: sections['Hashtags']?.join(' ').trim() ?? '',
+    sources: sections['Sources']?.join('\n').trim() ?? '',
+    imageUrls: sections['Images']
+      ?.filter(l => l.trim().startsWith('http'))
+      .map(l => l.trim()) ?? [],
+    colorScheme: sections['Color Scheme'] ?? null, // not yet in output
+  };
+}
 ```
 
-### Pattern 2: Supporting-File Context Injection
+### Pattern 2: Dual Render Path — Preview vs Export
 
-**What:** Complex formatting rules (citation format, slide structure, tone voice) are stored as separate `.md` files in the skill directory and referenced from SKILL.md. Claude loads them only when needed, keeping context lean during the research phase.
+**What:** Maintain two rendering paths: a CSS-scaled React component for the interactive preview, and a Canvas 2D (or off-screen DOM element captured via html-to-image) for export-quality 1080x1080 PNG output.
 
-**When to use:** Any time the skill has more than one distinct phase with different knowledge requirements. Research phase needs source URLs; generation phase needs citation rules. Load only what each phase needs.
+**When to use:** Always. Browser CSS rendering is fast and interactive; Canvas 2D or captured DOM rendering is accurate and pixel-exact. Do not try to export from the CSS preview element — it will produce blurry output on retina screens unless pixel ratio is handled explicitly.
 
-**Trade-offs:** Reduces context bloat; requires explicit `Read [file]` instructions in SKILL.md so Claude knows when to load each file. Without explicit instructions, Claude may not load them.
+**Trade-offs:** Two render paths means two implementations of the same visual layout. Mitigated by deriving both from the same `designStore` values and the same layout constants in `slideLayout.ts`. Any visual change must be applied in both paths, but the constants file makes this a single change point.
 
-**Example (SKILL.md reference block):**
-```markdown
-## Before writing slides
-Read `prompts/slides.md` for slide structure rules.
-Read `prompts/citation.md` for citation format.
-Read `examples/output-sample.md` to understand expected output shape.
+**Export pixel ratio handling:**
+```typescript
+// export/exportPng.ts — using html-to-image
+import { toPng } from 'html-to-image';
+
+export async function exportSlidePng(slideEl: HTMLElement): Promise<Blob> {
+  const dataUrl = await toPng(slideEl, {
+    width: 1080,
+    height: 1080,
+    pixelRatio: 1,     // CRITICAL: override devicePixelRatio
+    // pixelRatio: 1 ensures output is exactly 1080x1080px on retina displays
+    // without this, a 2x retina screen would produce 2160x2160px output
+  });
+  // convert dataUrl to Blob for JSZip
+  const res = await fetch(dataUrl);
+  return res.blob();
+}
 ```
 
-### Pattern 3: Schema-First Output Contract
+### Pattern 3: Font-Loaded Gate Before Render
 
-**What:** Define the exact output structure once (in `examples/output-sample.md`) and make all generation instructions refer to it. The output file is the contract — slides, caption, hashtags, citations, and image URLs all have fixed positions and formats.
+**What:** All canvas or DOM-capture renders must be gated behind `document.fonts.ready` (or explicit `FontFace.load()` per font). Custom fonts not yet loaded produce blank/fallback text in canvas output even if they appear correct in the CSS preview.
 
-**When to use:** Any pipeline where the output will be consumed by a human with a repeatable workflow (in this case, copying slides into a design tool). Consistent structure removes daily friction.
+**When to use:** Any time a custom Google Font or bundled font is used in the canvas renderer. This is a silent failure — canvas renders the fallback system font without any error.
 
-**Trade-offs:** Constrains Claude's output shape; makes the skill less flexible for ad-hoc use. Acceptable here because the user has a repeatable Instagram publishing workflow.
+**Trade-offs:** Adds async complexity. The fontLoader module centralizes this; all render calls go through `await fontLoader.ensureLoaded([fontName1, fontName2])` before drawing.
+
+**Example:**
+```typescript
+// renderer/fontLoader.ts
+const loaded = new Set<string>();
+
+export async function ensureLoaded(fontNames: string[]): Promise<void> {
+  const toLoad = fontNames.filter(f => !loaded.has(f));
+  await Promise.all(
+    toLoad.map(async (name) => {
+      const face = new FontFace(name, `url(https://fonts.gstatic.com/...)`);
+      await face.load();
+      document.fonts.add(face);
+      loaded.add(name);
+    })
+  );
+  await document.fonts.ready;
+}
+```
 
 ---
 
 ## Data Flow
 
-### Full Request Flow (Auto-Topic Mode)
+### Markdown Load → Preview
 
 ```
-User types: /science
-        |
-        v
-SKILL.md loaded by Claude Code
-        |
-        v
-Phase 1 — PARALLEL FETCH
-  WebSearch "trending science this week [date]"      ---+
-  WebFetch nature.com/news (headlines + URLs)        ---+---> Raw results pool
-  WebFetch sciencedaily.com (headlines + URLs)       ---+
-  WebFetch arxiv.org recent listings (field search)  ---+
-        |
-        v
-Phase 2 — SELECTION
-  Score candidates (recency, source quality, visual potential)
-  Pick top 1 story
-  WebFetch full article URL (deep content read)
-        |
-        v
-Phase 3 — GENERATION (Claude native)
-  Read prompts/slides.md
-  Read prompts/citation.md
-  Read examples/output-sample.md
-        |
-        v
-  Write 5-7 slide text chunks
-  Write Instagram caption (summary + refs, ~2200 chars)
-  Write 5 hashtags
-  Format APA citation + DOI + clickable URL
-  Collect source image URL(s)
-        |
-        v
-Phase 4 — OUTPUT
-  Write structured markdown to output/YYYY-MM-DD-[slug].md
-  Print confirmation to terminal
+User drops file onto DropZone
+    |
+    v
+FileReader.readAsText(file)
+    |
+    v
+markdownToSlides(rawText) → CarouselDoc
+    |
+    v
+carouselStore.setDocument(doc)
+    |
+    v
+designStore.initFromColorScheme(doc.colorScheme ?? defaultDesign)
+    |
+    v
+SlidePreview re-renders (Zustand subscription)
+    → scales 1080x1080 layout down to fit panel via CSS transform
 ```
 
-### Targeted Topic Mode (user passes argument)
+### Design Edit → Live Preview
 
 ```
-User types: /science "quantum computing memory"
-        |
-        v
-$ARGUMENTS = "quantum computing memory"
-        |
-        v
-Phase 1 — PARALLEL FETCH (topic-scoped)
-  WebSearch "quantum computing memory site:arxiv.org latest"
-  WebSearch "quantum computing memory site:nature.com OR site:science.org latest"
-  WebFetch PubMed search URL with topic terms
-        |
-        v
-[Same selection → generation → output flow as above]
+User changes color in PaletteEditor
+    |
+    v
+designStore.setPalette({ bg: '#1a1a2e', accent: '#e94560' })
+    |
+    v
+SlidePreview re-renders (Zustand subscription, no re-parse)
+    → instant visual update — no canvas involved
 ```
 
-### Key Data Flows
+### Export → PNG Download
 
-1. **Source URL → Full Content:** WebSearch/WebFetch returns headlines and URLs; a second WebFetch round reads the full article body for the selected story. This two-round approach avoids fetching all articles in full.
-2. **Raw Article → Slide Chunks:** Claude reads the full article content and breaks it into 5-7 narrative chunks following the hook → development → payoff structure defined in `prompts/slides.md`.
-3. **Article Metadata → Citation:** Author, date, DOI/URL, and journal name are extracted from the fetched article page or its structured metadata and formatted to APA/Harvard by the generation phase.
-4. **Generated Package → Disk:** The complete markdown output is written to `output/` by Claude using its Write tool, giving the user a permanent, dated record of each day's package.
+```
+ExportButton clicked
+    |
+    v
+uiStore.setExporting(true)
+    |
+    v
+for each slide in carouselStore.slides[]:
+    1. inject slide content into off-screen SlideCanvas element
+    2. await fontLoader.ensureLoaded(designStore.fonts)
+    3. blob = await exportSlidePng(slideCanvasEl)
+    4. zip.file(`slide-${i+1}.png`, blob)
+    |
+    v
+zip.generateAsync({ type: 'blob' })
+    |
+    v
+triggerDownload(blob, `${date}-${slug}-carousel.zip`)
+    |
+    v
+uiStore.setExporting(false)
+```
 
----
+### Color Scheme → Design Initialization
 
-## Scaling Considerations
+```
+CarouselDoc.colorScheme (parsed from ## Color Scheme section)
+    |
+    ├── present → designStore.initFromColorScheme(colorScheme)
+    │              maps: background → palette.bg
+    │                    accent → palette.accent
+    │                    text → palette.text
+    │                    heading_font → designStore.fonts.heading
+    │                    body_font → designStore.fonts.body
+    │
+    └── absent (current state of output files) → designStore.initFromColorScheme(null)
+                                                   uses defaultDesign constants
+```
 
-This is a single-user daily tool. Scaling is not a concern. The relevant dimension is **daily friction**, not user scale.
-
-| Concern | Approach |
-|---------|----------|
-| Slow fetch (news sites with large HTML) | Use targeted section URLs (e.g., `/news` or `/latest`) rather than homepages; this reduces payload size |
-| Context window pressure | Load supporting prompt files only in Phase 3; keep Phase 1-2 context lean |
-| Source unavailability | Instruct the skill to fall back to the next-best candidate if a primary source fetch fails |
-| Output inconsistency across days | `examples/output-sample.md` anchors format; review after first 5 runs and update the example if drift appears |
-
----
-
-## Anti-Patterns
-
-### Anti-Pattern 1: All Instructions in One SKILL.md Block
-
-**What people do:** Write 800+ lines of instructions directly in SKILL.md covering research rules, slide rules, citation rules, tone, examples, and fallback logic all in one file.
-
-**Why it's wrong:** Claude Code's skill context budget is ~16,000 characters (or 2% of context window). A monolithic SKILL.md will exceed budget and truncate silently, causing unpredictable behaviour. It also makes maintenance painful.
-
-**Do this instead:** Keep SKILL.md under 500 lines as the orchestration script. Move detailed rules into `prompts/` files and load them only in the generation phase.
-
-### Anti-Pattern 2: Fetching Full Article Pages for All Candidates
-
-**What people do:** WebFetch all 6-10 candidate articles in full to evaluate them, then pick one.
-
-**Why it's wrong:** Full article pages are often 50-200KB of HTML. Fetching 10 of them consumes the context window and adds latency to every run, even though 9 of 10 articles will be discarded.
-
-**Do this instead:** Two-round fetching. Round 1: search result pages and headline aggregators to collect titles, summaries, and URLs. Round 2: WebFetch only the single selected article in full.
-
-### Anti-Pattern 3: Hardcoded Source URLs in SKILL.md
-
-**What people do:** Embed specific article URLs or hardcode dated search queries directly in the skill instructions.
-
-**Why it's wrong:** News sites change URL structures. Hardcoded dates go stale immediately. The skill becomes broken or irrelevant without maintenance.
-
-**Do this instead:** Use search terms and section paths (e.g., `nature.com/news`, `arxiv.org/list/physics.gen-ph/recent`) that remain stable. Inject today's date via `!date +%Y-%m-%d` dynamic context substitution for recency-scoped searches.
-
-### Anti-Pattern 4: Skipping the Example Output File
-
-**What people do:** Describe the desired output format entirely in prose instructions ("write 5-7 slides, each 2-3 sentences, then a caption...").
-
-**Why it's wrong:** Prose descriptions of output format are ambiguous and drift across runs. Claude interprets them differently each time, producing inconsistent slide lengths, caption structures, and citation formats.
-
-**Do this instead:** Write one canonical `examples/output-sample.md` with a real (or fabricated) complete carousel package. Reference it explicitly. Claude matches examples far more reliably than descriptions.
+**Note:** The current `/science` skill output does NOT include a `## Color Scheme` section. DESIGN-05 requires adding this section to the skill's output template. Until that change ships, the UI falls back to `defaultDesign`. This is not a blocker — the UI must handle both cases.
 
 ---
 
 ## Integration Points
 
-### External Sources (WebFetch/WebSearch — no API keys)
+### Existing System — What Changes
 
-| Source | Integration Pattern | URL Pattern | Notes |
-|--------|---------------------|-------------|-------|
-| Nature | WebFetch section page | `nature.com/news` | HTML parse; headline + URL extraction |
-| Science Daily | WebFetch section page | `sciencedaily.com/news/` | HTML parse |
-| New Scientist | WebFetch section page | `newscientist.com/news/` | May have paywall on full articles |
-| Ars Technica Science | WebFetch section page | `arstechnica.com/science/` | Generally open access |
-| arXiv | WebSearch + WebFetch | `arxiv.org/search/?query=...` | Abstract pages freely accessible; full PDF not needed |
-| PubMed | WebSearch + WebFetch | `pubmed.ncbi.nlm.nih.gov/?term=...` | Abstract + DOI always available |
-| Google Scholar | WebSearch only | Do not WebFetch directly | Bot-blocking; use WebSearch to surface Scholar links then fetch the source paper directly |
+| Component | Change Type | Detail |
+|-----------|-------------|--------|
+| `output/YYYY-MM-DD-[slug].md` | Read-only input | No change to format required for MVP. Drag & drop into web UI. |
+| `/science` skill (SKILL.md) | ADD new output section | Add `## Color Scheme` section with `bg`, `accent`, `text`, `heading_font`, `body_font` fields to satisfy DESIGN-05. This is additive — existing files remain valid; parser handles absence gracefully. |
+| `output-template.md` | ADD color scheme block | Update the skill's output template to include the Color Scheme section. |
 
-### Internal Boundaries (Skill Components)
+### New Components — Web UI
+
+| Component | New vs Modified | Depends On |
+|-----------|-----------------|------------|
+| `web-ui/` directory | NEW | None (new separate app) |
+| `markdownToSlides.ts` | NEW | Existing markdown format contract |
+| `carouselStore`, `designStore`, `uiStore` | NEW | Zustand |
+| `SlidePreview` (CSS-scaled) | NEW | designStore, carouselStore |
+| `SlideCanvas` (off-screen 1080x1080) | NEW | renderer/renderSlide.ts |
+| `fontLoader.ts` | NEW | CSS Font Loading API |
+| `exportPng.ts` | NEW | html-to-image |
+| `exportZip.ts` | NEW | JSZip |
+
+### Internal Boundaries
 
 | Boundary | Communication | Notes |
 |----------|---------------|-------|
-| SKILL.md → prompts/slides.md | Claude `Read` tool | Explicit `Read` instruction required; not auto-loaded |
-| SKILL.md → prompts/citation.md | Claude `Read` tool | Load only in Phase 3 |
-| SKILL.md → examples/output-sample.md | Claude `Read` tool | Load only in Phase 3 as format anchor |
-| Phase 1 (research) → Phase 2 (selection) | In-context carry | Research results held in Claude's context window between phases |
-| Phase 3 (generation) → output/ | Claude `Write` tool | Writes `output/YYYY-MM-DD-[slug].md` |
+| Parse layer → State layer | `carouselStore.setDocument(doc)` | One-way on file load; parse result is immutable until next file drop |
+| State layer → Preview | Zustand subscription (reactive) | Preview re-renders on every designStore mutation |
+| State layer → Export | Read-only access to both stores | Export reads current state; does not mutate |
+| CSS Preview → Canvas Renderer | Both consume `designStore` + `slideLayout.ts` constants | Same values, two rendering implementations |
+| Skill output → Web UI | File system (user drags file from `output/`) | No programmatic connection — intentional; user reviews before design work |
 
 ---
 
 ## Suggested Build Order
 
-Based on component dependencies:
+Dependencies drive this order — each step unblocks the next.
 
-1. **`examples/output-sample.md`** — Define the output contract first. Everything else is built to produce this shape. Writing it first also forces concrete decisions about slide count, caption length, and citation format.
+1. **`parse/markdownToSlides.ts` + `types.ts`** — Define the `CarouselDoc` type and parse function first. This is the data contract everything else builds on. Test with the actual CRISPR and solar fuel output files before moving forward.
 
-2. **`prompts/system.md`** — Establish tone and Instagram format constraints. This is the foundation that all generation instructions rest on.
+2. **`store/carouselStore.ts` + `store/designStore.ts`** — Wire up state with hardcoded default design values. No UI yet — just verify that `setDocument()` populates the stores correctly.
 
-3. **`prompts/citation.md` + `prompts/slides.md`** — Generation-phase rules. Build these after the example so they are consistent with the concrete shape you already defined.
+3. **`components/DropZone.tsx`** — File drag & drop + `FileReader` → `markdownToSlides()` → `carouselStore.setDocument()`. Validate the full parse path end-to-end with a real file.
 
-4. **`SKILL.md` (research phase only)** — Wire up the fetch orchestration for a single source first (e.g., arXiv only). Validate that fetching and selection work end-to-end before adding more sources.
+4. **`components/PreviewPanel/SlidePreview.tsx`** — CSS-scaled preview of a single slide. Hard-code layout first (fixed background, text positions). Confirm visual output looks right at the target 1080x1080 proportions. No editor yet.
 
-5. **`SKILL.md` (generation phase)** — Add the content generation phase. Validate output shape against `examples/output-sample.md`.
+5. **`renderer/fontLoader.ts` + `renderer/renderSlide.ts` + `renderer/SlideCanvas.tsx`** — Off-screen canvas renderer. Must match the CSS preview visually. Validate by exporting a single slide and comparing pixel output.
 
-6. **Multi-source expansion** — Add remaining news sources and PubMed once the single-source pipeline is confirmed stable.
+6. **`export/exportPng.ts` + `export/exportZip.ts`** — Individual PNG download and ZIP bundle. Test that `pixelRatio: 1` produces exactly 1080x1080 output.
 
-7. **Auto-topic mode** — Add trending detection last. It is the most variable and least deterministic part of the pipeline; stabilise everything else first.
+7. **`components/EditorPanel/PaletteEditor.tsx`** — Color editing. Verify live preview updates on every change.
+
+8. **`components/EditorPanel/FontPicker.tsx` + `renderer/fontLoader.ts` font loading** — Add font selection. Test that canvas renderer uses the selected font (silent failure risk — see Pitfalls).
+
+9. **`components/EditorPanel/TextEditor.tsx`** — Per-slide text overrides. Lowest priority — the parsed text is usually correct; this is a "polish" feature.
+
+10. **Skill update: add `## Color Scheme` section** — Update SKILL.md and `output-template.md` to emit a color scheme block. Update `designStore.initFromColorScheme()` to consume it. Verify with a freshly generated output file.
+
+---
+
+## Anti-Patterns
+
+### Anti-Pattern 1: Exporting from the CSS Preview Element
+
+**What people do:** Capture the visible scaled preview `<div>` using html-to-image and download that as the PNG.
+
+**Why it's wrong:** The preview is CSS-scaled (e.g., scaled down to 540px for display). Even with `pixelRatio: 2`, the output is a rescaled version of a smaller element. Text rendering, subpixel antialiasing, and font hinting differ from a natively 1080px element. The exported PNG will be soft.
+
+**Do this instead:** Maintain a separate off-screen `SlideCanvas` element rendered at true 1080x1080px with `position: absolute; left: -9999px`. Capture that element with `pixelRatio: 1`. The preview is display-only; the canvas is export-only.
+
+### Anti-Pattern 2: Rendering Canvas Before Fonts Are Loaded
+
+**What people do:** Call `ctx.fillText()` immediately after setting `ctx.font = '32px "Inter"'`, before the font has resolved.
+
+**Why it's wrong:** The canvas silently falls back to a system font (e.g., Arial or sans-serif). The exported PNG uses a different font than the preview. No error is thrown.
+
+**Do this instead:** Always `await fontLoader.ensureLoaded([headingFont, bodyFont])` before any canvas draw call. The font loader caches loaded faces so subsequent slides don't wait.
+
+### Anti-Pattern 3: One Monolithic Zustand Store
+
+**What people do:** Put slides, design settings, and UI state into a single flat Zustand store.
+
+**Why it's wrong:** A color change in `designStore` triggers re-evaluation of slide content selectors even though slide content hasn't changed. Export state (`isExporting`) causes preview components to re-render. With 6 slides each subscribed to the same store, unnecessary re-renders accumulate.
+
+**Do this instead:** Three focused slices (`carouselStore`, `designStore`, `uiStore`). Components subscribe only to the slice they need. A font change re-renders only preview components subscribed to `designStore`, not slide content components.
+
+### Anti-Pattern 4: Tight Coupling Between Parser and Skill Output Format
+
+**What people do:** Hardcode section names as bare strings scattered through parser logic (checking for `'Slide 1:'`, `'Slide 2:'` individually).
+
+**Why it's wrong:** When the skill adds a `## Color Scheme` section or renames `Images` to `Image Sources`, the parser breaks in non-obvious ways — some sections parse, some silently return empty.
+
+**Do this instead:** Define a `SECTION_PATTERNS` constant object that maps semantic names to the regex patterns that detect them. Parser logic references `SECTION_PATTERNS.SLIDE`, `SECTION_PATTERNS.COLOR_SCHEME`, etc. When the format changes, update the constants file, not scattered parser logic.
+
+---
+
+## Scaling Considerations
+
+This is a single-user local tool. The relevant dimension is **rendering latency** and **export fidelity**, not user scale.
+
+| Concern | Approach |
+|---------|----------|
+| Export time for 7 slides | Sequential canvas captures (~200ms each); total ~1.5s is acceptable. Do not parallelize — concurrent DOM captures on the same off-screen element produce race conditions. |
+| Preview lag on design edits | CSS-based preview (no canvas involved) updates in <16ms. No debounce needed for color changes. Debounce font changes by 300ms since they trigger font loading. |
+| Large slide text overflow | The CSS preview reveals overflow visually. Add a character count warning per slide in the TextEditor (Instagram carousel slides read best under ~200 chars). |
+| font.load() failure (no internet) | Fall back to bundled system font (Inter via `public/fonts/`). fontLoader should catch rejected promises and log a warning, not crash. |
 
 ---
 
 ## Sources
 
-- [Claude Code Skills official documentation](https://code.claude.ai/docs/en/skills) — HIGH confidence; authoritative and current as of 2026-03-15
-- [Understanding Skills, Agents, Subagents, and MCP in Claude Code](https://colinmcnamara.com/blog/understanding-skills-agents-and-mcp-in-claude-code) — MEDIUM confidence; verified against official docs
-- [Claude Code Customization: CLAUDE.md, Slash Commands, Skills, and Subagents](https://alexop.dev/posts/claude-code-customization-guide-claudemd-skills-subagents/) — MEDIUM confidence; real-world patterns consistent with official docs
-- [claude-deep-research-skill — 8-phase pipeline example](https://github.com/199-biotechnologies/claude-deep-research-skill) — MEDIUM confidence; real-world reference implementation
-- [research30 — multi-source academic skill example](https://github.com/shandley/research30) — MEDIUM confidence; real-world reference implementation showing parallel fetch + deduplication patterns
-- [Claude Code Agent Skills 2.0](https://medium.com/@richardhightower/claude-code-agent-skills-2-0-from-custom-instructions-to-programmable-agents-ab6e4563c176) — LOW confidence; community article, patterns verified against official docs
+- [MDN: CSS Font Loading API](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Font_Loading_API) — `FontFace`, `document.fonts.add()`, `document.fonts.ready`. HIGH confidence.
+- [MDN: Window.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio) — pixel ratio canvas scaling. HIGH confidence.
+- [html-to-image npm](https://www.npmjs.com/package/html-to-image) — `toPng()`, `pixelRatio` option, performance vs html2canvas. MEDIUM confidence (npm docs + community comparison articles).
+- [html2canvas vs html-to-image comparison — npm-compare.com](https://npm-compare.com/dom-to-image,html-to-image,html2canvas) — library comparison, download trends. MEDIUM confidence.
+- [Better Programming: Replacing html2canvas with html-to-image](https://betterprogramming.pub/heres-why-i-m-replacing-html2canvas-with-html-to-image-in-our-react-app-d8da0b85eadf) — real-world migration rationale. MEDIUM confidence.
+- [JSZip documentation](https://stuk.github.io/jszip/) — client-side ZIP generation API. HIGH confidence.
+- [client-zip npm](https://www.npmjs.com/package/client-zip) — lightweight alternative to JSZip (40x faster per benchmarks). MEDIUM confidence.
+- [gray-matter npm](https://www.npmjs.com/package/gray-matter) — YAML frontmatter parsing. HIGH confidence.
+- [Zustand — state management in React 2025](https://makersden.io/blog/react-state-management-in-2025) — Zustand as the standard middle-ground for client state. MEDIUM confidence.
+- [Konva: Custom Font with Canvas](https://konvajs.org/docs/sandbox/Custom_Font.html) — FontFace API + canvas font load pattern. HIGH confidence (official Konva docs).
+- [Konva: High-Quality Canvas Export](https://konvajs.org/docs/data_and_serialization/High-Quality-Export.html) — pixelRatio handling for canvas export. HIGH confidence.
 
 ---
-*Architecture research for: Claude Code science carousel skill (Project Pleiades)*
-*Researched: 2026-03-15*
+
+*Architecture research for: Web UI carousel image generator (Project Pleiades v1.1)*
+*Researched: 2026-03-17*

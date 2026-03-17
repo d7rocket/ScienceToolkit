@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { DropZone } from './components/DropZone';
 import { MetaBar } from './components/MetaBar';
+import { SlideCanvas } from './components/SlideCanvas';
+import { ThumbnailStrip } from './components/ThumbnailStrip';
 import { useCarouselStore } from './store/useCarouselStore';
 
 export default function App() {
-  const { meta, setFontsReady } = useCarouselStore();
+  const { meta, slides, setFontsReady } = useCarouselStore();
 
   useEffect(() => {
     document.fonts.ready.then(() => setFontsReady(true));
@@ -14,9 +16,20 @@ export default function App() {
     <div className="min-h-screen bg-neutral-950 text-white flex flex-col">
       {meta && <MetaBar />}
       <DropZone>
-        <div className="flex-1 flex items-center justify-center text-neutral-600 text-sm">
-          Canvas renders here (Plan 02)
-        </div>
+        {slides.length > 0 ? (
+          <div className="flex flex-1 overflow-hidden">
+            <aside className="w-44 flex-shrink-0 border-r border-neutral-800 overflow-y-auto bg-neutral-900">
+              <ThumbnailStrip />
+            </aside>
+            <main className="flex-1 flex items-start justify-center p-6 overflow-auto">
+              <SlideCanvas />
+            </main>
+          </div>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-neutral-600 text-sm">
+            Load a markdown file to begin
+          </div>
+        )}
       </DropZone>
     </div>
   );

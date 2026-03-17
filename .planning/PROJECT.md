@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Claude Code skill that fetches the latest science content from 6 sources (arXiv, PubMed, ScienceDaily, Phys.org, Nature News, Ars Technica), then packages it into an Instagram carousel-ready output — slide text with hooks and cliff-hangers, caption summary, hashtags, and full academic citations with DOIs and clickable URLs. Includes auto-topic discovery with 14-day diversity tracking and post-generation format validation.
+A Claude Code skill that fetches the latest science content from 7 sources (arXiv, PubMed, ScienceDirect, ScienceDaily, Phys.org, Nature News, Ars Technica), then packages it into an Instagram carousel-ready output — slide text with hooks and cliff-hangers, caption summary, hashtags, and full academic citations with DOIs and clickable URLs. Includes auto-topic discovery with 14-day diversity tracking, post-generation format validation, and a local web UI for rendering markdown into export-ready carousel images with full design editing.
 
 ## Core Value
 
@@ -35,12 +35,27 @@ Reliably deliver a complete, well-sourced daily science content package that sav
 
 - [ ] User can specify a topic as CLI input to override auto-pick (TOPIC-03)
 - [ ] Field-spanning auto-pick with explicit rotation across physics, biology, space, chemistry, medicine, tech (TOPIC-04)
+- [ ] Local web UI renders markdown carousel files into visual slide images (DESIGN-01)
+- [ ] User can drag & drop markdown file to load carousel content (DESIGN-02)
+- [ ] Full design editor — colors, fonts, text, spacing/alignment (DESIGN-03)
+- [ ] Export slides as individual 1080x1080 PNGs and ZIP bundle (DESIGN-04)
+- [ ] Color scheme from markdown drives initial palette, user can override (DESIGN-05)
+
+## Current Milestone: v1.1 Carousel Image Generator
+
+**Goal:** Build a local web UI that transforms markdown carousel output into high-quality, export-ready Instagram carousel images with full design editing.
+
+**Target features:**
+- Drag & drop markdown loading with live preview
+- Visual slide renderer (1080x1080px Instagram format)
+- Full editor: color palette, font pairing, text editing, spacing/alignment
+- PNG export (individual + ZIP bundle)
+- Color scheme integration from `/science` output
 
 ### Out of Scope
 
 - API integrations — user runs this from their Claude subscription, no external API keys
 - Automated posting to Instagram — user publishes manually; manual review is intentional quality control
-- Image/design generation — requires external AI image APIs; user handles visual design from source images
 - Reels/video content — carousel-first; reels repurposing is a future consideration
 - Multi-topic batch generation — defeats daily-freshness purpose
 - Content calendar / scheduling — requires persistent background jobs beyond CLI agent scope
@@ -80,4 +95,4 @@ Known concern: arXiv `journal_ref` field population rate unknown — peer-review
 | Stop clause pattern for self-checks | Hard block "Do NOT proceed to Step 6 until checks pass" | ✓ Good — stronger than advisory |
 
 ---
-*Last updated: 2026-03-16 after v1.0 milestone*
+*Last updated: 2026-03-17 after v1.1 milestone start*

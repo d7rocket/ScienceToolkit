@@ -3,7 +3,8 @@
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-4 (shipped 2026-03-16)
-- 🚧 **v1.1 Carousel Image Generator** — Phases 5-6 (in progress)
+- ✅ **v1.1 Phase 5 Renderer and Export** — shipped 2026-03-18
+- 🚧 **v1.1 Carousel Image Generator** — Phase 6 remaining (Design Editor and Quality)
 
 ## Phases
 
@@ -23,7 +24,7 @@ See: [v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 
 **Milestone Goal:** Build a local web UI that transforms markdown carousel output into export-ready Instagram carousel images.
 
-- [ ] **Phase 5: Renderer and Export** - File loading, slide rendering, and PNG/ZIP export pipeline
+- [x] **Phase 5: Renderer and Export** - File loading, slide rendering, and PNG/ZIP export pipeline — COMPLETE 2026-03-18
 - [ ] **Phase 6: Design Editor and Quality** - Full design editing controls with premium default template
 
 ## Phase Details
@@ -41,9 +42,9 @@ See: [v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Vite scaffold, type definitions, markdown parser, Zustand store, DropZone and MetaBar components
-- [ ] 05-02-PLAN.md — Canvas constants, slide layout functions, SlideCanvas component, ThumbnailStrip sidebar
-- [ ] 05-03-PLAN.md — PNG and ZIP export pipeline, ExportPanel, canvas registry, visual verification checkpoint
+- [x] 05-01-PLAN.md — Vite scaffold, type definitions, markdown parser, Zustand store, DropZone and MetaBar components
+- [x] 05-02-PLAN.md — Canvas constants, slide layout functions, SlideCanvas component, ThumbnailStrip sidebar
+- [x] 05-03-PLAN.md — PNG and ZIP export pipeline, ExportPanel, canvas registry, visual verification checkpoint
 
 ### Phase 6: Design Editor and Quality
 **Goal**: Users can customize fonts, colors, and text on any slide, and the default template produces premium-quality output without any edits
@@ -70,5 +71,5 @@ Plans:
 | 2. Source Fetching | v1.0 | 1/1 | Complete | 2026-03-16 |
 | 3. Content Generation | v1.0 | 3/3 | Complete | 2026-03-16 |
 | 4. Validation and Auto-Topic | v1.0 | 2/2 | Complete | 2026-03-16 |
-| 5. Renderer and Export | 2/3 | In Progress|  | - |
+| 5. Renderer and Export | v1.1 | 3/3 | Complete | 2026-03-18 |
 | 6. Design Editor and Quality | v1.1 | 0/3 | Not started | - |

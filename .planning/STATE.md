@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Carousel Image Generator
-status: planning
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-17T21:22:10.233Z"
-last_activity: 2026-03-17 — v1.1 roadmap created (2 phases, 21/21 requirements mapped)
+status: active
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-03-18T21:34:25Z"
+last_activity: 2026-03-18 — Phase 5 Plan 03 complete — export pipeline shipped, full app shippable
 progress:
   total_phases: 2
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 0
+  completed_plans: 3
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Reliably deliver a complete, well-sourced daily science content package that saves hours of manual research while maintaining academic credibility.
-**Current focus:** v1.1 Phase 5 — Renderer and Export
+**Current focus:** v1.1 Phase 5 complete — Renderer and Export shipped
 
 ## Current Position
 
-Phase: 5 of 6 (Renderer and Export)
-Plan: — of 3
-Status: Ready to plan
-Last activity: 2026-03-17 — v1.1 roadmap created (2 phases, 21/21 requirements mapped)
+Phase: 5 of 6 (Renderer and Export) — COMPLETE
+Plan: 3 of 3
+Status: Phase complete
+Last activity: 2026-03-18 — Phase 5 all 3 plans complete — carousel-ui app shippable
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -48,9 +48,13 @@ Progress: [░░░░░░░░░░] 0%
 | 3. Content Generation | 3 | ~17 min |
 | 4. Validation and Auto-Topic | 2 | ~16 min |
 
-*v1.1 metrics will populate as plans complete*
-| Phase 05-renderer-and-export P01 | 15 | 3 tasks | 17 files |
-| Phase 05-renderer-and-export P02 | 3 | 2 tasks | 9 files |
+*v1.1 metrics:*
+
+| Phase | Duration | Tasks | Files |
+|-------|----------|-------|-------|
+| Phase 05-renderer-and-export P01 | 15 min | 3 tasks | 17 files |
+| Phase 05-renderer-and-export P02 | 3 min | 2 tasks | 9 files |
+| Phase 05-renderer-and-export P03 | ~10 min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -67,6 +71,10 @@ All v1.0 decisions archived to PROJECT.md Key Decisions table.
 - [Phase 05-02]: canvas.add() called with multiple args in one batch call; TDD test adapted to count total objects across all add() calls via reduce
 - [Phase 05-02]: Thumbnail Fabric.js instances isolated in child Thumbnail component with own useRef/useEffect for proper per-slide dispose
 - [Phase 05-02]: renderSafezoneOverlay tracks overlay by .name property on canvas objects via getObjects() scan to avoid module-level mutable state
+- [Phase 05-03]: Thumbnail canvases (not main SlideCanvas) are the export source — always rendered and in sync with slide data
+- [Phase 05-03]: multiplier:1 is mandatory on canvas.toDataURL — canvas already 1080x1080, any higher multiplier produces oversized output
+- [Phase 05-03]: fetch(dataUrl) used for base64-to-Blob conversion inside ZIP pipeline — reliable cross-browser approach
+- [Phase 05-03]: Per-slide download buttons live in ThumbnailStrip (not ExportPanel) — keeps XPRT-03 fallback close to the visual element it operates on
 
 ### Pending Todos
 
@@ -76,10 +84,10 @@ None.
 
 - [v1.0] Slide text verbosity (~150 chars per body slide) may exceed Instagram whitespace budget — inline text editing in Phase 6 is the fix mechanism
 - [v1.1] `/science` skill does not yet emit `## Color Scheme` section (DESIGN-05 pending) — parser handles absence with defaultDesign fallback, not a launch blocker
-- [v1.1] Phase 5 has 3 critical pitfalls that must be solved before any other work: font loading gate, pixelRatio=1 for export, no cross-origin canvas assets
+- [RESOLVED - Phase 05-03] Phase 5 critical pitfalls (font loading gate, pixelRatio=1, no cross-origin canvas assets) — all solved, human-verified
 
 ## Session Continuity
 
-Last session: 2026-03-17T21:22:10.224Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-18T21:34:25Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None

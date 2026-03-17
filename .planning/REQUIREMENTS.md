@@ -32,9 +32,9 @@ Requirements for the Carousel Image Generator web UI. Each maps to roadmap phase
 
 ### Export
 
-- [ ] **XPRT-01**: User can export individual slides as 1080x1080 PNG files
-- [ ] **XPRT-02**: User can export all slides as a ZIP bundle
-- [ ] **XPRT-03**: Exported images match the preview exactly (font rendering, colors, layout)
+- [x] **XPRT-01**: User can export individual slides as 1080x1080 PNG files
+- [x] **XPRT-02**: User can export all slides as a ZIP bundle
+- [x] **XPRT-03**: Exported images match the preview exactly (font rendering, colors, layout)
 
 ### Design Quality
 
@@ -77,9 +77,9 @@ Deferred to future release. Tracked but not in current roadmap.
 | RNDR-04 | Phase 5 | Complete |
 | RNDR-05 | Phase 5 | Complete |
 | RNDR-06 | Phase 5 | Complete |
-| XPRT-01 | Phase 5 | Pending |
-| XPRT-02 | Phase 5 | Pending |
-| XPRT-03 | Phase 5 | Pending |
+| XPRT-01 | Phase 5 | Complete |
+| XPRT-02 | Phase 5 | Complete |
+| XPRT-03 | Phase 5 | Complete |
 | EDIT-01 | Phase 6 | Pending |
 | EDIT-02 | Phase 6 | Pending |
 | EDIT-03 | Phase 6 | Pending |

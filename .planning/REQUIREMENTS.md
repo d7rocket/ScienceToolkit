@@ -9,9 +9,9 @@ Requirements for the Carousel Image Generator web UI. Each maps to roadmap phase
 
 ### File Loading
 
-- [ ] **LOAD-01**: User can drag & drop a markdown file onto the UI to load carousel content
-- [ ] **LOAD-02**: User can see parsed slide count, topic title, and date after loading
-- [ ] **LOAD-03**: Color scheme from markdown auto-populates the palette controls
+- [x] **LOAD-01**: User can drag & drop a markdown file onto the UI to load carousel content
+- [x] **LOAD-02**: User can see parsed slide count, topic title, and date after loading
+- [x] **LOAD-03**: Color scheme from markdown auto-populates the palette controls
 
 ### Rendering
 
@@ -68,33 +68,33 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LOAD-01 | TBD | Pending |
-| LOAD-02 | TBD | Pending |
-| LOAD-03 | TBD | Pending |
-| RNDR-01 | TBD | Pending |
-| RNDR-02 | TBD | Pending |
-| RNDR-03 | TBD | Pending |
-| RNDR-04 | TBD | Pending |
-| RNDR-05 | TBD | Pending |
-| RNDR-06 | TBD | Pending |
-| EDIT-01 | TBD | Pending |
-| EDIT-02 | TBD | Pending |
-| EDIT-03 | TBD | Pending |
-| EDIT-04 | TBD | Pending |
-| EDIT-05 | TBD | Pending |
-| XPRT-01 | TBD | Pending |
-| XPRT-02 | TBD | Pending |
-| XPRT-03 | TBD | Pending |
-| QUAL-01 | TBD | Pending |
-| QUAL-02 | TBD | Pending |
-| QUAL-03 | TBD | Pending |
-| QUAL-04 | TBD | Pending |
+| LOAD-01 | Phase 5 | Complete |
+| LOAD-02 | Phase 5 | Complete |
+| LOAD-03 | Phase 5 | Complete |
+| RNDR-01 | Phase 5 | Pending |
+| RNDR-02 | Phase 5 | Pending |
+| RNDR-03 | Phase 5 | Pending |
+| RNDR-04 | Phase 5 | Pending |
+| RNDR-05 | Phase 5 | Pending |
+| RNDR-06 | Phase 5 | Pending |
+| XPRT-01 | Phase 5 | Pending |
+| XPRT-02 | Phase 5 | Pending |
+| XPRT-03 | Phase 5 | Pending |
+| EDIT-01 | Phase 6 | Pending |
+| EDIT-02 | Phase 6 | Pending |
+| EDIT-03 | Phase 6 | Pending |
+| EDIT-04 | Phase 6 | Pending |
+| EDIT-05 | Phase 6 | Pending |
+| QUAL-01 | Phase 6 | Pending |
+| QUAL-02 | Phase 6 | Pending |
+| QUAL-03 | Phase 6 | Pending |
+| QUAL-04 | Phase 6 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 21 total
-- Mapped to phases: 0
-- Unmapped: 21 ⚠️
+- Mapped to phases: 21
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-17*
-*Last updated: 2026-03-17 after initial definition*
+*Last updated: 2026-03-17 after roadmap creation*

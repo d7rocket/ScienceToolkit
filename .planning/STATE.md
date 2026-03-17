@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Carousel Image Generator
 status: planning
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-17T20:27:58.839Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-17T21:14:54.778Z"
 last_activity: 2026-03-17 — v1.1 roadmap created (2 phases, 21/21 requirements mapped)
 progress:
   total_phases: 2
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 1
   percent: 0
 ---
 
@@ -49,6 +49,7 @@ Progress: [░░░░░░░░░░] 0%
 | 4. Validation and Auto-Topic | 2 | ~16 min |
 
 *v1.1 metrics will populate as plans complete*
+| Phase 05-renderer-and-export P01 | 15 | 3 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -59,6 +60,9 @@ All v1.0 decisions archived to PROJECT.md Key Decisions table.
 **v1.1 pending decisions:**
 - Fabric.js vs html-to-image for export path — resolve at Phase 5 start (SUMMARY.md recommends Fabric.js throughout)
 - Exact font pairing weights, sizes, line heights — design iteration during Phase 6
+- [Phase 05-01]: Used @fontsource-variable/inter npm package (opsz variant, 131KB) instead of rsms.me download — rsms.me returned HTML; opsz satisfies >100KB requirement
+- [Phase 05-01]: Pinned fabric to ^6.9.x to avoid v7 originX/originY default-to-center breaking change that would require rewriting all layout positioning code
+- [Phase 05-01]: parseMarkdown returns colors: null (not defaultDesign) when Color Scheme section is absent — store's loadFile applies the defaultDesign fallback, keeping concerns separated
 
 ### Pending Todos
 
@@ -72,6 +76,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-17T20:27:58.830Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-renderer-and-export/05-CONTEXT.md
+Last session: 2026-03-17T21:14:54.776Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None

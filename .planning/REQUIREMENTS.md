@@ -15,12 +15,12 @@ Requirements for the Carousel Image Generator web UI. Each maps to roadmap phase
 
 ### Rendering
 
-- [ ] **RNDR-01**: Each slide renders as a 1080x1080px canvas with the loaded color palette
-- [ ] **RNDR-02**: Live preview updates in real-time when colors, fonts, or text change
-- [ ] **RNDR-03**: Slides use role-aware fixed layouts — hook slide (large title, minimal body), body slides (title + text), CTA slide (takeaway + follow prompt)
-- [ ] **RNDR-04**: Layout is constant across all posts — consistent margins, safe zones, and content placement
-- [ ] **RNDR-05**: Safe zone overlay toggle shows Instagram UI boundaries (top 120px, bottom 150px, sides 80px)
-- [ ] **RNDR-06**: Slide thumbnail strip shows all slides as navigable mini-previews
+- [x] **RNDR-01**: Each slide renders as a 1080x1080px canvas with the loaded color palette
+- [x] **RNDR-02**: Live preview updates in real-time when colors, fonts, or text change
+- [x] **RNDR-03**: Slides use role-aware fixed layouts — hook slide (large title, minimal body), body slides (title + text), CTA slide (takeaway + follow prompt)
+- [x] **RNDR-04**: Layout is constant across all posts — consistent margins, safe zones, and content placement
+- [x] **RNDR-05**: Safe zone overlay toggle shows Instagram UI boundaries (top 120px, bottom 150px, sides 80px)
+- [x] **RNDR-06**: Slide thumbnail strip shows all slides as navigable mini-previews
 
 ### Design Editor
 
@@ -71,12 +71,12 @@ Deferred to future release. Tracked but not in current roadmap.
 | LOAD-01 | Phase 5 | Complete |
 | LOAD-02 | Phase 5 | Complete |
 | LOAD-03 | Phase 5 | Complete |
-| RNDR-01 | Phase 5 | Pending |
-| RNDR-02 | Phase 5 | Pending |
-| RNDR-03 | Phase 5 | Pending |
-| RNDR-04 | Phase 5 | Pending |
-| RNDR-05 | Phase 5 | Pending |
-| RNDR-06 | Phase 5 | Pending |
+| RNDR-01 | Phase 5 | Complete |
+| RNDR-02 | Phase 5 | Complete |
+| RNDR-03 | Phase 5 | Complete |
+| RNDR-04 | Phase 5 | Complete |
+| RNDR-05 | Phase 5 | Complete |
+| RNDR-06 | Phase 5 | Complete |
 | XPRT-01 | Phase 5 | Pending |
 | XPRT-02 | Phase 5 | Pending |
 | XPRT-03 | Phase 5 | Pending |

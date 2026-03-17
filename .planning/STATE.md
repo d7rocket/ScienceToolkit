@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Carousel Image Generator
 status: planning
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-17T21:14:54.778Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-17T21:22:10.233Z"
 last_activity: 2026-03-17 — v1.1 roadmap created (2 phases, 21/21 requirements mapped)
 progress:
   total_phases: 2
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -50,6 +50,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *v1.1 metrics will populate as plans complete*
 | Phase 05-renderer-and-export P01 | 15 | 3 tasks | 17 files |
+| Phase 05-renderer-and-export P02 | 3 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,9 @@ All v1.0 decisions archived to PROJECT.md Key Decisions table.
 - [Phase 05-01]: Used @fontsource-variable/inter npm package (opsz variant, 131KB) instead of rsms.me download — rsms.me returned HTML; opsz satisfies >100KB requirement
 - [Phase 05-01]: Pinned fabric to ^6.9.x to avoid v7 originX/originY default-to-center breaking change that would require rewriting all layout positioning code
 - [Phase 05-01]: parseMarkdown returns colors: null (not defaultDesign) when Color Scheme section is absent — store's loadFile applies the defaultDesign fallback, keeping concerns separated
+- [Phase 05-02]: canvas.add() called with multiple args in one batch call; TDD test adapted to count total objects across all add() calls via reduce
+- [Phase 05-02]: Thumbnail Fabric.js instances isolated in child Thumbnail component with own useRef/useEffect for proper per-slide dispose
+- [Phase 05-02]: renderSafezoneOverlay tracks overlay by .name property on canvas objects via getObjects() scan to avoid module-level mutable state
 
 ### Pending Todos
 
@@ -76,6 +80,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-17T21:14:54.776Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-17T21:22:10.224Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None

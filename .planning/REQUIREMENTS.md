@@ -25,8 +25,8 @@ Requirements for the Carousel Image Generator web UI. Each maps to roadmap phase
 ### Design Editor
 
 - [x] **EDIT-01**: User can select from 3-4 curated font pairings as named presets
-- [ ] **EDIT-02**: User can override any of the 4 color roles (background, text, accent, highlight)
-- [ ] **EDIT-03**: User can select from named color scheme presets beyond the auto-loaded palette
+- [x] **EDIT-02**: User can override any of the 4 color roles (background, text, accent, highlight)
+- [x] **EDIT-03**: User can select from named color scheme presets beyond the auto-loaded palette
 - [ ] **EDIT-04**: User can edit slide text inline on the canvas
 - [x] **EDIT-05**: User can adjust spacing and text alignment per slide
 
@@ -81,8 +81,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | XPRT-02 | Phase 5 | Complete |
 | XPRT-03 | Phase 5 | Complete |
 | EDIT-01 | Phase 6 | Complete |
-| EDIT-02 | Phase 6 | Pending |
-| EDIT-03 | Phase 6 | Pending |
+| EDIT-02 | Phase 6 | Complete |
+| EDIT-03 | Phase 6 | Complete |
 | EDIT-04 | Phase 6 | Pending |
 | EDIT-05 | Phase 6 | Complete |
 | QUAL-01 | Phase 6 | Complete |

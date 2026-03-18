@@ -64,7 +64,7 @@ Declared values (multiples of 4 only). Source: Tailwind v4 defaults confirmed fr
 Exceptions:
 - Right sidebar inner padding: 16px horizontal, 24px vertical (`px-4 py-6`)
 - Color swatch size: 32x32px (touch-friendly, square)
-- Font preset button height: 44px minimum (touch target)
+- Font preset button height: 48px minimum (touch target) (`min-h-12`)
 - Right sidebar total width: 260px (fits 4 swatches at 32px + 8px gaps in a row)
 
 Canvas-side spacing is governed by `constants.ts` layout values — not subject to this scale:

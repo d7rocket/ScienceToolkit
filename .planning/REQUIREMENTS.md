@@ -24,11 +24,11 @@ Requirements for the Carousel Image Generator web UI. Each maps to roadmap phase
 
 ### Design Editor
 
-- [ ] **EDIT-01**: User can select from 3-4 curated font pairings as named presets
+- [x] **EDIT-01**: User can select from 3-4 curated font pairings as named presets
 - [ ] **EDIT-02**: User can override any of the 4 color roles (background, text, accent, highlight)
 - [ ] **EDIT-03**: User can select from named color scheme presets beyond the auto-loaded palette
 - [ ] **EDIT-04**: User can edit slide text inline on the canvas
-- [ ] **EDIT-05**: User can adjust spacing and text alignment per slide
+- [x] **EDIT-05**: User can adjust spacing and text alignment per slide
 
 ### Export
 
@@ -38,10 +38,10 @@ Requirements for the Carousel Image Generator web UI. Each maps to roadmap phase
 
 ### Design Quality
 
-- [ ] **QUAL-01**: Default template produces premium, science-newsletter-level output without any user edits
-- [ ] **QUAL-02**: Typography follows science editorial hierarchy — headline 52-64px hook, 36-44px body titles, 22-26px body text
-- [ ] **QUAL-03**: 60/40 whitespace-to-content ratio maintained across all slide layouts
-- [ ] **QUAL-04**: Fonts are self-hosted and loaded before any canvas render (no FOIT)
+- [x] **QUAL-01**: Default template produces premium, science-newsletter-level output without any user edits
+- [x] **QUAL-02**: Typography follows science editorial hierarchy — headline 52-64px hook, 36-44px body titles, 22-26px body text
+- [x] **QUAL-03**: 60/40 whitespace-to-content ratio maintained across all slide layouts
+- [x] **QUAL-04**: Fonts are self-hosted and loaded before any canvas render (no FOIT)
 
 ## Future Requirements
 
@@ -80,15 +80,15 @@ Deferred to future release. Tracked but not in current roadmap.
 | XPRT-01 | Phase 5 | Complete |
 | XPRT-02 | Phase 5 | Complete |
 | XPRT-03 | Phase 5 | Complete |
-| EDIT-01 | Phase 6 | Pending |
+| EDIT-01 | Phase 6 | Complete |
 | EDIT-02 | Phase 6 | Pending |
 | EDIT-03 | Phase 6 | Pending |
 | EDIT-04 | Phase 6 | Pending |
-| EDIT-05 | Phase 6 | Pending |
-| QUAL-01 | Phase 6 | Pending |
-| QUAL-02 | Phase 6 | Pending |
-| QUAL-03 | Phase 6 | Pending |
-| QUAL-04 | Phase 6 | Pending |
+| EDIT-05 | Phase 6 | Complete |
+| QUAL-01 | Phase 6 | Complete |
+| QUAL-02 | Phase 6 | Complete |
+| QUAL-03 | Phase 6 | Complete |
+| QUAL-04 | Phase 6 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 21 total

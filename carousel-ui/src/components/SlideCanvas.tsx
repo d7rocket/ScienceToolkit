@@ -43,7 +43,7 @@ export function SlideCanvas() {
     const slide = slides[activeSlideIndex];
     if (!slide) return;
     const alignment = alignmentOverrides[activeSlideIndex] ?? 'left';
-    renderSlide(fc, slide, colors, selectedFontPreset, alignment, false);
+    renderSlide(fc, slide, colors, selectedFontPreset, alignment, true);
   }, [slides, activeSlideIndex, colors, fontsReady, selectedFontPreset, alignmentOverrides]);
 
   // Toggle safe zone overlay

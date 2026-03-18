@@ -13,6 +13,7 @@ import { MetaBar } from './components/MetaBar';
 import { SlideCanvas } from './components/SlideCanvas';
 import { ThumbnailStrip } from './components/ThumbnailStrip';
 import { ExportPanel } from './components/ExportPanel';
+import { DesignEditor } from './components/DesignEditor';
 import { useCarouselStore } from './store/useCarouselStore';
 
 export default function App() {
@@ -28,13 +29,21 @@ export default function App() {
       <DropZone>
         {slides.length > 0 ? (
           <div className="flex flex-1 overflow-hidden">
-            <aside className="w-44 flex-shrink-0 border-r border-neutral-800 overflow-y-auto bg-neutral-900">
+            {/* Left sidebar — thumbnails */}
+            <aside className="w-40 flex-shrink-0 border-r border-neutral-800 overflow-y-auto bg-neutral-900">
               <ThumbnailStrip />
             </aside>
+
+            {/* Main canvas area */}
             <main className="flex-1 flex flex-col items-center p-6 overflow-auto gap-4">
               <SlideCanvas />
               <ExportPanel />
             </main>
+
+            {/* Right sidebar — design editor */}
+            <aside className="w-[260px] flex-shrink-0 border-l border-neutral-800 overflow-y-auto bg-neutral-900">
+              <DesignEditor />
+            </aside>
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center text-neutral-600 text-sm">

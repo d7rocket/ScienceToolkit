@@ -20,6 +20,7 @@ beforeEach(() => {
     fontsReady: false,
     exportProgress: 0,
     exportError: null,
+    alignmentOverrides: {},
   });
 });
 
@@ -101,6 +102,60 @@ describe('useCarouselStore', () => {
       useCarouselStore.getState().toggleSafezone();
       const state = useCarouselStore.getState();
       expect(state.safezoneVisible).toBe(true);
+    });
+  });
+
+  describe('font and color actions', () => {
+    it('default selectedFontPreset.name is Orbital', () => {
+      const state = useCarouselStore.getState();
+      expect(state.selectedFontPreset.name).toBe('Orbital');
+    });
+
+    it('setFontPreset sets selectedFontPreset to the given preset', () => {
+      const preset = { name: 'Editorial', headingFont: 'Fraunces', bodyFont: 'Inter' };
+      useCarouselStore.getState().setFontPreset(preset);
+      const state = useCarouselStore.getState();
+      expect(state.selectedFontPreset).toEqual(preset);
+    });
+
+    it('setColor updates only the specified role', () => {
+      useCarouselStore.getState().setColor('accent', '#FF0000');
+      const state = useCarouselStore.getState();
+      expect(state.colors.accent).toBe('#FF0000');
+      expect(state.colors.background).toBe('#0B0E2D');
+      expect(state.colors.primaryText).toBe('#F0F0F5');
+      expect(state.colors.highlight).toBe('#00CEC9');
+    });
+
+    it('setColors replaces entire colors object', () => {
+      const scheme = { background: '#111111', primaryText: '#EEEEEE', accent: '#AABBCC', highlight: '#DDEEFF' };
+      useCarouselStore.getState().setColors(scheme);
+      const state = useCarouselStore.getState();
+      expect(state.colors).toEqual(scheme);
+    });
+  });
+
+  describe('alignment and slide actions', () => {
+    it('setAlignment sets alignmentOverrides for given slide index', () => {
+      useCarouselStore.getState().setAlignment(2, 'center');
+      const state = useCarouselStore.getState();
+      expect(state.alignmentOverrides[2]).toBe('center');
+    });
+
+    it('updateSlide updates only the targeted slide', () => {
+      useCarouselStore.getState().loadFile(crisprText);
+      useCarouselStore.getState().updateSlide(0, { title: 'New Title' });
+      const state = useCarouselStore.getState();
+      expect(state.slides[0].title).toBe('New Title');
+      // Other slides unchanged
+      expect(state.slides[1].title).not.toBe('New Title');
+    });
+
+    it('loadFile resets alignmentOverrides to empty object', () => {
+      useCarouselStore.getState().setAlignment(1, 'right');
+      useCarouselStore.getState().loadFile(crisprText);
+      const state = useCarouselStore.getState();
+      expect(state.alignmentOverrides).toEqual({});
     });
   });
 });

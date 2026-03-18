@@ -1,3 +1,12 @@
+import '@fontsource/space-grotesk/400.css';
+import '@fontsource/space-grotesk/700.css';
+import '@fontsource/fraunces/400.css';
+import '@fontsource/fraunces/700.css';
+import '@fontsource/dm-serif-display/400.css';
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '@fontsource/syne/400.css';
+import '@fontsource/syne/700.css';
 import { useEffect } from 'react';
 import { DropZone } from './components/DropZone';
 import { MetaBar } from './components/MetaBar';

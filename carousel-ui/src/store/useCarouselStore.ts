@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { parseMarkdown } from '../parser/parseMarkdown';
-import { defaultDesign } from '../types/carousel';
-import type { CarouselMeta, ColorScheme, ParsedSlide } from '../types/carousel';
+import { defaultDesign, FONT_PRESETS } from '../types/carousel';
+import type { CarouselMeta, ColorScheme, FontPairing, ParsedSlide } from '../types/carousel';
 
 interface CarouselStore {
   slides: ParsedSlide[];
@@ -12,6 +12,8 @@ interface CarouselStore {
   fontsReady: boolean;
   exportProgress: number;
   exportError: string | null;
+  selectedFontPreset: FontPairing;
+  alignmentOverrides: Record<number, 'left' | 'center' | 'right'>;
 
   loadFile: (text: string) => void;
   setActiveSlide: (index: number) => void;
@@ -19,6 +21,11 @@ interface CarouselStore {
   setFontsReady: (ready: boolean) => void;
   setExportProgress: (pct: number) => void;
   setExportError: (err: string | null) => void;
+  setFontPreset: (preset: FontPairing) => void;
+  setColor: (role: keyof ColorScheme, value: string) => void;
+  setColors: (scheme: ColorScheme) => void;
+  setAlignment: (slideIndex: number, alignment: 'left' | 'center' | 'right') => void;
+  updateSlide: (index: number, partial: Partial<ParsedSlide>) => void;
 }
 
 export const useCarouselStore = create<CarouselStore>((set) => ({
@@ -30,6 +37,8 @@ export const useCarouselStore = create<CarouselStore>((set) => ({
   fontsReady: false,
   exportProgress: 0,
   exportError: null,
+  selectedFontPreset: FONT_PRESETS[0],
+  alignmentOverrides: {},
 
   loadFile: (text: string) => {
     const parsed = parseMarkdown(text);
@@ -45,6 +54,7 @@ export const useCarouselStore = create<CarouselStore>((set) => ({
       activeSlideIndex: 0,
       exportProgress: 0,
       exportError: null,
+      alignmentOverrides: {},
     });
   },
 
@@ -57,4 +67,21 @@ export const useCarouselStore = create<CarouselStore>((set) => ({
   setExportProgress: (pct: number) => set({ exportProgress: pct }),
 
   setExportError: (err: string | null) => set({ exportError: err }),
+
+  setFontPreset: (preset: FontPairing) => set({ selectedFontPreset: preset }),
+
+  setColor: (role: keyof ColorScheme, value: string) =>
+    set((state) => ({ colors: { ...state.colors, [role]: value } })),
+
+  setColors: (scheme: ColorScheme) => set({ colors: scheme }),
+
+  setAlignment: (slideIndex: number, alignment: 'left' | 'center' | 'right') =>
+    set((state) => ({
+      alignmentOverrides: { ...state.alignmentOverrides, [slideIndex]: alignment },
+    })),
+
+  updateSlide: (index: number, partial: Partial<ParsedSlide>) =>
+    set((state) => ({
+      slides: state.slides.map((s, i) => (i === index ? { ...s, ...partial } : s)),
+    })),
 }));

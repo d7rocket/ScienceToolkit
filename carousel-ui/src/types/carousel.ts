@@ -36,3 +36,28 @@ export interface ParsedCarousel {
   slides: ParsedSlide[];
   colors: ColorScheme | null;
 }
+
+export interface FontPairing {
+  name: string;
+  headingFont: string;
+  bodyFont: string;
+}
+
+export const FONT_PRESETS: FontPairing[] = [
+  { name: 'Orbital',      headingFont: 'Space Grotesk', bodyFont: 'Inter' },
+  { name: 'Editorial',    headingFont: 'Fraunces',      bodyFont: 'Inter' },
+  { name: 'Newsletter',   headingFont: 'DM Serif Display', bodyFont: 'DM Sans' },
+  { name: 'Contemporary', headingFont: 'Syne',          bodyFont: 'Inter' },
+];
+
+export interface ColorPreset {
+  name: string;
+  scheme: ColorScheme;
+}
+
+export const COLOR_PRESETS: ColorPreset[] = [
+  { name: 'Cosmos',      scheme: { background: '#0B0E2D', primaryText: '#F0F0F5', accent: '#6C5CE7', highlight: '#00CEC9' } },
+  { name: 'Deep Ocean',  scheme: { background: '#0A1628', primaryText: '#E8F4FD', accent: '#0EA5E9', highlight: '#22D3EE' } },
+  { name: 'Forest Lab',  scheme: { background: '#0D1F0D', primaryText: '#F0F7F0', accent: '#22C55E', highlight: '#A3E635' } },
+  { name: 'Solar Flare', scheme: { background: '#1A0A00', primaryText: '#FFF7ED', accent: '#F97316', highlight: '#FBBF24' } },
+];

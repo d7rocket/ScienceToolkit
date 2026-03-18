@@ -6,10 +6,10 @@ export interface ColorScheme {
 }
 
 export const defaultDesign: ColorScheme = {
-  background: '#0B0E2D',
-  primaryText: '#F0F0F5',
-  accent: '#6C5CE7',
-  highlight: '#00CEC9',
+  background: '#FAF8F4',
+  primaryText: '#1A1714',
+  accent: '#C8A96E',
+  highlight: '#9E8C6A',
 };
 
 export type SlideRole = 'hook' | 'body' | 'cta';
@@ -44,10 +44,10 @@ export interface FontPairing {
 }
 
 export const FONT_PRESETS: FontPairing[] = [
-  { name: 'Orbital',      headingFont: 'Space Grotesk', bodyFont: 'Inter' },
-  { name: 'Editorial',    headingFont: 'Fraunces',      bodyFont: 'Inter' },
+  { name: 'Editorial',    headingFont: 'Fraunces',         bodyFont: 'Inter' },
+  { name: 'Orbital',      headingFont: 'Space Grotesk',    bodyFont: 'Inter' },
   { name: 'Newsletter',   headingFont: 'DM Serif Display', bodyFont: 'DM Sans' },
-  { name: 'Contemporary', headingFont: 'Syne',          bodyFont: 'Inter' },
+  { name: 'Contemporary', headingFont: 'Syne',             bodyFont: 'Inter' },
 ];
 
 export interface ColorPreset {
@@ -56,6 +56,7 @@ export interface ColorPreset {
 }
 
 export const COLOR_PRESETS: ColorPreset[] = [
+  { name: 'Classic',     scheme: { background: '#FAF8F4', primaryText: '#1A1714', accent: '#C8A96E', highlight: '#9E8C6A' } },
   { name: 'Cosmos',      scheme: { background: '#0B0E2D', primaryText: '#F0F0F5', accent: '#6C5CE7', highlight: '#00CEC9' } },
   { name: 'Deep Ocean',  scheme: { background: '#0A1628', primaryText: '#E8F4FD', accent: '#0EA5E9', highlight: '#22D3EE' } },
   { name: 'Forest Lab',  scheme: { background: '#0D1F0D', primaryText: '#F0F7F0', accent: '#22C55E', highlight: '#A3E635' } },

@@ -15,10 +15,11 @@ interface ThumbnailProps {
   font: FontPairing;
   alignment: 'left' | 'center' | 'right';
   isActive: boolean;
+  totalSlides: number;
   onClick: () => void;
 }
 
-function Thumbnail({ slide, colors, font, alignment, isActive, onClick }: ThumbnailProps) {
+function Thumbnail({ slide, colors, font, alignment, isActive, totalSlides, onClick }: ThumbnailProps) {
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
 
@@ -35,7 +36,7 @@ function Thumbnail({ slide, colors, font, alignment, isActive, onClick }: Thumbn
     fabricRef.current = fc;
     // slide.index is 1-based; registry is 0-based
     registerCanvas(slide.index - 1, fc);
-    renderSlide(fc, slide, colors, font, alignment, false);
+    renderSlide(fc, slide, colors, font, alignment, false, totalSlides);
 
     return () => {
       unregisterCanvas(slide.index - 1);
@@ -49,8 +50,8 @@ function Thumbnail({ slide, colors, font, alignment, isActive, onClick }: Thumbn
   useEffect(() => {
     const fc = fabricRef.current;
     if (!fc) return;
-    renderSlide(fc, slide, colors, font, alignment, false);
-  }, [slide, colors, font, alignment]);
+    renderSlide(fc, slide, colors, font, alignment, false, totalSlides);
+  }, [slide, colors, font, alignment, totalSlides]);
 
   function handleDownload(e: React.MouseEvent) {
     e.stopPropagation();
@@ -126,6 +127,7 @@ export function ThumbnailStrip() {
           font={selectedFontPreset}
           alignment={alignmentOverrides[index] ?? 'left'}
           isActive={index === activeSlideIndex}
+          totalSlides={slides.length}
           onClick={() => setActiveSlide(index)}
         />
       ))}

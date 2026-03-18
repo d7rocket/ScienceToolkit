@@ -81,7 +81,7 @@ export function SlideCanvas() {
     const slide = slides[activeSlideIndex];
     if (!slide) return;
     const alignment = alignmentOverrides[activeSlideIndex] ?? 'left';
-    renderSlide(fc, slide, colors, selectedFontPreset, alignment, true);
+    renderSlide(fc, slide, colors, selectedFontPreset, alignment, true, slides.length);
   }, [slides, activeSlideIndex, colors, fontsReady, selectedFontPreset, alignmentOverrides]);
 
   // Attach editing:exited handlers to IText objects for inline editing commit

@@ -54,10 +54,10 @@ describe('useCarouselStore', () => {
       expect(state.meta?.slideCount).toBe(6);
     });
 
-    it('uses defaultDesign fallback (colors.background === #0B0E2D) when no Color Scheme', () => {
+    it('uses defaultDesign fallback (colors.background === #FAF8F4) when no Color Scheme', () => {
       useCarouselStore.getState().loadFile(crisprText);
       const state = useCarouselStore.getState();
-      expect(state.colors.background).toBe('#0B0E2D');
+      expect(state.colors.background).toBe('#FAF8F4');
     });
 
     it('resets activeSlideIndex to 0 after loading', () => {
@@ -106,9 +106,9 @@ describe('useCarouselStore', () => {
   });
 
   describe('font and color actions', () => {
-    it('default selectedFontPreset.name is Orbital', () => {
+    it('default selectedFontPreset.name is Editorial', () => {
       const state = useCarouselStore.getState();
-      expect(state.selectedFontPreset.name).toBe('Orbital');
+      expect(state.selectedFontPreset.name).toBe('Editorial');
     });
 
     it('setFontPreset sets selectedFontPreset to the given preset', () => {

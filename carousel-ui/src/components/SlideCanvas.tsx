@@ -11,6 +11,8 @@ export function SlideCanvas() {
   const safezoneVisible = useCarouselStore((s) => s.safezoneVisible);
   const fontsReady = useCarouselStore((s) => s.fontsReady);
   const toggleSafezone = useCarouselStore((s) => s.toggleSafezone);
+  const selectedFontPreset = useCarouselStore((s) => s.selectedFontPreset);
+  const alignmentOverrides = useCarouselStore((s) => s.alignmentOverrides);
 
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
@@ -34,14 +36,15 @@ export function SlideCanvas() {
     };
   }, [fontsReady]);
 
-  // Re-render slide when active slide or colors change
+  // Re-render slide when active slide, colors, font, or alignment change
   useEffect(() => {
     const fc = fabricRef.current;
     if (!fc || !slides.length) return;
     const slide = slides[activeSlideIndex];
     if (!slide) return;
-    renderSlide(fc, slide, colors);
-  }, [slides, activeSlideIndex, colors, fontsReady]);
+    const alignment = alignmentOverrides[activeSlideIndex] ?? 'left';
+    renderSlide(fc, slide, colors, selectedFontPreset, alignment, false);
+  }, [slides, activeSlideIndex, colors, fontsReady, selectedFontPreset, alignmentOverrides]);
 
   // Toggle safe zone overlay
   useEffect(() => {

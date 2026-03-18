@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import type { ParsedSlide, ColorScheme } from '../../types/carousel';
+import type { ParsedSlide, ColorScheme, FontPairing } from '../../types/carousel';
 
 // Mock Fabric.js Canvas
 vi.mock('fabric', () => {
@@ -63,6 +63,8 @@ const mockColors: ColorScheme = {
   highlight: '#00CEC9',
 };
 
+const mockFont: FontPairing = { name: 'Orbital', headingFont: 'Space Grotesk', bodyFont: 'Inter' };
+
 vi.mock('../../store/useCarouselStore', () => ({
   useCarouselStore: vi.fn((selector?: (s: object) => unknown) => {
     const state = {
@@ -70,6 +72,8 @@ vi.mock('../../store/useCarouselStore', () => ({
       colors: mockColors,
       activeSlideIndex: 0,
       setActiveSlide: mockSetActiveSlide,
+      selectedFontPreset: mockFont,
+      alignmentOverrides: {},
     };
     if (typeof selector === 'function') return selector(state);
     return state;
@@ -103,6 +107,8 @@ describe('ThumbnailStrip', () => {
         colors: mockColors,
         activeSlideIndex: 0,
         setActiveSlide: mockSetActiveSlide,
+        selectedFontPreset: mockFont,
+        alignmentOverrides: {},
       };
       if (typeof selector === 'function') return selector(state);
       return state;
@@ -120,6 +126,8 @@ describe('ThumbnailStrip', () => {
         colors: mockColors,
         activeSlideIndex: 0,
         setActiveSlide: mockSetActiveSlide,
+        selectedFontPreset: mockFont,
+        alignmentOverrides: {},
       };
       if (typeof selector === 'function') return selector(state);
       return state;
@@ -140,6 +148,8 @@ describe('ThumbnailStrip', () => {
         colors: mockColors,
         activeSlideIndex: 0,
         setActiveSlide: mockSetActiveSlide,
+        selectedFontPreset: mockFont,
+        alignmentOverrides: {},
       };
       if (typeof selector === 'function') return selector(state);
       return state;

@@ -203,7 +203,7 @@ describe('EDIT-01 font parameterization', () => {
     const customFont: FontPairing = { name: 'Orbital', headingFont: 'Space Grotesk', bodyFont: 'Inter' };
     renderBodySlide(canvas, mockBodySlide, mockColors, customFont, 'left', false);
     const allObjects = (canvas.add as ReturnType<typeof vi.fn>).mock.calls.flat();
-    const title = allObjects.find((o: any) => o.fontSize === 52 && o.fontFamily);
+    const title = allObjects.find((o: any) => o.fontSize === 48 && o.fontFamily);
     expect(title?.fontFamily).toBe('Space Grotesk');
   });
 });
@@ -214,28 +214,28 @@ describe('EDIT-05 alignment parameterization', () => {
     const canvas = makeMockCanvas();
     renderBodySlide(canvas, mockBodySlide, mockColors, mockFont, 'center', false);
     const allObjects = (canvas.add as ReturnType<typeof vi.fn>).mock.calls.flat();
-    const title = allObjects.find((o: any) => o.fontSize === 52 && o.name === 'title');
+    const title = allObjects.find((o: any) => o.fontSize === 48 && o.name === 'title');
     expect(title?.textAlign).toBe('center');
-    const body = allObjects.find((o: any) => o.fontSize === 32 && o.name === 'body');
+    const body = allObjects.find((o: any) => o.fontSize === 28 && o.name === 'body');
     expect(body?.textAlign).toBe('center');
   });
 });
 
 describe('QUAL-02 font size verification', () => {
-  it('hook title is 64px (italic), body title is 52px, body text is 32px', async () => {
+  it('hook title is 60px (italic), body title is 48px, body text is 28px', async () => {
     const { renderHookSlide, renderBodySlide } = await import('../layouts');
     const hCanvas = makeMockCanvas();
     renderHookSlide(hCanvas, mockSlide, mockColors, mockFont, 'left', false);
     const hookObjs = (hCanvas.add as ReturnType<typeof vi.fn>).mock.calls.flat();
     const hookTitle = hookObjs.find((o: any) => o.text === 'Test Hook Title' && o.fontSize);
-    expect(hookTitle?.fontSize).toBe(64);
+    expect(hookTitle?.fontSize).toBe(60);
 
     const bCanvas = makeMockCanvas();
     renderBodySlide(bCanvas, mockBodySlide, mockColors, mockFont, 'left', false);
     const bodyObjs = (bCanvas.add as ReturnType<typeof vi.fn>).mock.calls.flat();
-    const bodyTitle = bodyObjs.find((o: any) => o.fontSize === 52 && o.name === 'title');
+    const bodyTitle = bodyObjs.find((o: any) => o.fontSize === 48 && o.name === 'title');
     expect(bodyTitle).toBeDefined();
-    const bodyText = bodyObjs.find((o: any) => o.fontSize === 32 && o.name === 'body');
+    const bodyText = bodyObjs.find((o: any) => o.fontSize === 28 && o.name === 'body');
     expect(bodyText).toBeDefined();
   });
 });

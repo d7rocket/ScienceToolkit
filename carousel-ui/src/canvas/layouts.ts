@@ -6,58 +6,50 @@ import {
   CONTENT_Y,
   CONTENT_WIDTH,
   CONTENT_HEIGHT,
-  CONTENT_BOTTOM,
 } from './constants';
+
+// ─── Constants ─────────────────────────────────────────────────────────────────
+
+// Vertical zone boundaries
+const ZONE_TOP    = 160;  // below top row + margin
+const ZONE_BOTTOM = 920;  // above dots
+const ZONE_H      = ZONE_BOTTOM - ZONE_TOP;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Always uses Textbox so text auto-wraps at the specified width in both modes. */
-function makeText(
+function txt(
   text: string,
   options: Record<string, unknown>,
   interactive: boolean
-) {
+): Textbox {
   return new Textbox(text, {
     ...options,
     selectable: interactive,
     evented: interactive,
     editable: interactive,
+    splitByGrapheme: false,
   });
 }
 
-/** Alias — identical to makeText; kept for call-site clarity. */
-function makeTextbox(
-  text: string,
-  options: Record<string, unknown>,
-  interactive: boolean
-) {
-  return makeText(text, options, interactive);
-}
-
-/** L-shaped corner marks at top-left and bottom-right of the slide (matching reference HTML). */
+/** L-shaped corner marks at top-left and bottom-right of the slide. */
 function addCornerMarks(canvas: Canvas, colors: ColorScheme): void {
-  const ARM = 120;   // arm length in px (scaled from reference 48px @ 420px → 123px @ 1080px)
-  const THICK = 5;   // arm thickness
-  const DOT = 10;    // accent dot at the corner joint
-  const S = CANVAS_SIZE;
-  const fill = colors.accent;
+  const ARM   = 120;
+  const THICK = 5;
+  const DOT   = 10;
+  const S     = CANVAS_SIZE;
+  const fill  = colors.accent;
 
-  // Top-left
   canvas.add(
     new Rect({ left: 0, top: 0, width: ARM, height: THICK, fill, opacity: 0.35, selectable: false, evented: false }),
     new Rect({ left: 0, top: 0, width: THICK, height: ARM, fill, opacity: 0.35, selectable: false, evented: false }),
     new Rect({ left: 0, top: 0, width: DOT, height: DOT, rx: DOT / 2, ry: DOT / 2, fill, opacity: 0.55, selectable: false, evented: false }),
-  );
-
-  // Bottom-right (rotated 180° = mirrored to opposite corner)
-  canvas.add(
     new Rect({ left: S - ARM, top: S - THICK, width: ARM, height: THICK, fill, opacity: 0.35, selectable: false, evented: false }),
     new Rect({ left: S - THICK, top: S - ARM, width: THICK, height: ARM, fill, opacity: 0.35, selectable: false, evented: false }),
     new Rect({ left: S - DOT, top: S - DOT, width: DOT, height: DOT, rx: DOT / 2, ry: DOT / 2, fill, opacity: 0.55, selectable: false, evented: false }),
   );
 }
 
-/** Slide number "02 — 06" right-aligned at the top. */
+/** Slide number "02 — 06" right-aligned near the top. */
 function addTopRow(
   canvas: Canvas,
   slide: ParsedSlide,
@@ -76,7 +68,7 @@ function addTopRow(
     fill: colors.primaryText,
     opacity: 0.45,
     left: CONTENT_X,
-    top: 82,
+    top: 80,
     width: CONTENT_WIDTH,
     textAlign: 'right',
     selectable: false,
@@ -84,7 +76,7 @@ function addTopRow(
   }));
 }
 
-/** Dot progress indicator at the bottom. Active dot is a pill; others are circles. */
+/** Dot progress indicator + swipe hint at the bottom. */
 function addBottomRow(
   canvas: Canvas,
   slide: ParsedSlide,
@@ -93,50 +85,59 @@ function addBottomRow(
 ): void {
   if (totalSlides <= 0) return;
 
-  const DOT_H = 14;        // dot height (and width for inactive)
-  const ACTIVE_W = 42;     // active pill width
-  const GAP = 10;
-  const N = totalSlides;
-  const activeIdx = slide.index - 1; // 0-based
+  const DOT_H    = 14;
+  const ACTIVE_W = 42;
+  const GAP      = 10;
+  const N        = totalSlides;
+  const active   = slide.index - 1;
 
-  // Total width: N-1 inactive dots + 1 active pill + gaps
   const totalWidth = (N - 1) * DOT_H + ACTIVE_W + (N - 1) * GAP;
   let x = (CANVAS_SIZE - totalWidth) / 2;
   const Y = CANVAS_SIZE - 72;
 
   for (let i = 0; i < N; i++) {
-    const isActive = i === activeIdx;
+    const isActive = i === active;
     const w = isActive ? ACTIVE_W : DOT_H;
     canvas.add(new Rect({
-      left: x,
-      top: Y,
-      width: w,
-      height: DOT_H,
-      rx: DOT_H / 2,
-      ry: DOT_H / 2,
+      left: x, top: Y, width: w, height: DOT_H,
+      rx: DOT_H / 2, ry: DOT_H / 2,
       fill: colors.accent,
       opacity: isActive ? 1 : 0.2,
-      selectable: false,
-      evented: false,
+      selectable: false, evented: false,
     }));
     x += w + GAP;
   }
 
-  // "swipe →" hint on non-last slides
   if (slide.role !== 'cta' && totalSlides > 1) {
     canvas.add(new FabricText('swipe →', {
-      fontFamily: 'Inter',
-      fontWeight: '400',
-      fontSize: 22,
-      fill: colors.primaryText,
-      opacity: 0.25,
-      left: CONTENT_X,
-      top: Y + 2,
-      width: CONTENT_WIDTH,
-      textAlign: 'right',
-      selectable: false,
-      evented: false,
+      fontFamily: 'Inter', fontWeight: '400', fontSize: 22,
+      fill: colors.primaryText, opacity: 0.25,
+      left: CONTENT_X, top: Y + 2, width: CONTENT_WIDTH, textAlign: 'right',
+      selectable: false, evented: false,
     }));
+  }
+}
+
+/**
+ * Center a stack of objects vertically within [ZONE_TOP, ZONE_BOTTOM].
+ * Each item: { obj, gap } where gap is the space above this item.
+ * The first item's gap is ignored (offset from stack start).
+ */
+function centerStack(
+  items: Array<{ obj: Textbox | Rect; gap: number }>
+): void {
+  // Total height = sum of obj heights + sum of gaps (skip first gap)
+  const totalH = items.reduce((sum, item, i) => {
+    return sum + item.obj.height + (i > 0 ? item.gap : 0);
+  }, 0);
+
+  const startY = ZONE_TOP + Math.max(0, (ZONE_H - totalH) / 2);
+
+  let y = startY;
+  for (let i = 0; i < items.length; i++) {
+    if (i > 0) y += items[i].gap;
+    items[i].obj.set({ top: y });
+    y += items[i].obj.height;
   }
 }
 
@@ -144,63 +145,53 @@ function addBottomRow(
 
 export function renderHookSlide(
   canvas: Canvas, slide: ParsedSlide, colors: ColorScheme,
-  font: FontPairing, alignment: 'left' | 'center' | 'right', interactive: boolean,
+  font: FontPairing, _alignment: 'left' | 'center' | 'right', interactive: boolean,
   totalSlides: number = 0
 ): void {
   canvas.clear();
 
-  // Background
-  canvas.add(new Rect({
-    left: 0, top: 0, width: CANVAS_SIZE, height: CANVAS_SIZE,
-    fill: colors.background, selectable: false, evented: false,
-  }));
-
+  canvas.add(new Rect({ left: 0, top: 0, width: CANVAS_SIZE, height: CANVAS_SIZE, fill: colors.background, selectable: false, evented: false }));
   addCornerMarks(canvas, colors);
   addTopRow(canvas, slide, font, colors, totalSlides);
 
-  // Large italic title — 64px, allow up to 2 lines (64px × 1.25 ≈ 160px)
-  const HOOK_TITLE_TOP = 280;
-  const HOOK_RULE_TOP  = HOOK_TITLE_TOP + 190;  // 470 — below 2-line title
-  const HOOK_BODY_TOP  = HOOK_RULE_TOP + 36;    // 506
-
-  const title = makeText(slide.title, {
+  const title = txt(slide.title, {
     name: 'title',
     fontFamily: font.headingFont,
     fontStyle: 'italic',
     fontWeight: '400',
-    fontSize: 64,
+    fontSize: 60,
     fill: colors.primaryText,
     left: CONTENT_X,
-    top: HOOK_TITLE_TOP,
+    top: 0,
     width: CONTENT_WIDTH,
     textAlign: 'center',
+    lineHeight: 1.2,
   }, interactive);
 
-  // Accent rule below title
   const rule = new Rect({
-    left: CANVAS_SIZE / 2 - 40,
-    top: HOOK_RULE_TOP,
-    width: 80,
-    height: 5,
-    rx: 2, ry: 2,
-    fill: colors.accent,
-    selectable: false, evented: false,
+    left: CANVAS_SIZE / 2 - 40, top: 0,
+    width: 80, height: 5, rx: 2, ry: 2,
+    fill: colors.accent, selectable: false, evented: false,
   });
 
-  // Body text in highlight color — capped height to avoid dots overlap
-  const body = makeText(slide.body, {
+  const body = txt(slide.body, {
     name: 'body',
     fontFamily: font.bodyFont,
     fontWeight: '400',
-    fontSize: 33,
+    fontSize: 30,
     fill: colors.highlight,
     left: CONTENT_X,
-    top: HOOK_BODY_TOP,
+    top: 0,
     width: CONTENT_WIDTH,
-    height: CANVAS_SIZE - 150 - HOOK_BODY_TOP,
-    splitByGrapheme: false,
     textAlign: 'center',
+    lineHeight: 1.55,
   }, interactive);
+
+  centerStack([
+    { obj: title, gap: 0 },
+    { obj: rule,  gap: 28 },
+    { obj: body,  gap: 24 },
+  ]);
 
   canvas.add(title, rule, body);
   addBottomRow(canvas, slide, colors, totalSlides);
@@ -214,62 +205,50 @@ export function renderBodySlide(
 ): void {
   canvas.clear();
 
-  // Background
-  canvas.add(new Rect({
-    left: 0, top: 0, width: CANVAS_SIZE, height: CANVAS_SIZE,
-    fill: colors.background, selectable: false, evented: false,
-  }));
-
+  canvas.add(new Rect({ left: 0, top: 0, width: CANVAS_SIZE, height: CANVAS_SIZE, fill: colors.background, selectable: false, evented: false }));
   addCornerMarks(canvas, colors);
   addTopRow(canvas, slide, font, colors, totalSlides);
 
-  // Title — allow up to 2 lines (52px × 1.25 lh ≈ 130px)
-  const TITLE_TOP = CONTENT_Y + 20;      // 140
-  const RULE_TOP  = TITLE_TOP + 155;     // 295 — enough room below 2-line title
-  const BODY_TOP  = RULE_TOP + 30;       // 325
-
-  const title = makeText(slide.title, {
+  const title = txt(slide.title, {
     name: 'title',
     fontFamily: font.headingFont,
     fontWeight: '700',
-    fontSize: 52,
+    fontSize: 48,
     fill: colors.primaryText,
     left: CONTENT_X,
-    top: TITLE_TOP,
+    top: 0,
     width: CONTENT_WIDTH,
     textAlign: alignment,
+    lineHeight: 1.2,
   }, interactive);
 
-  // Accent bar: 80px wide × 5px — below title
-  const accentBar = new Rect({
-    left: CONTENT_X,
-    top: RULE_TOP,
-    width: 80,
-    height: 5,
-    rx: 2, ry: 2,
-    fill: colors.accent,
-    selectable: false, evented: false,
+  const rule = new Rect({
+    left: CONTENT_X, top: 0,
+    width: 80, height: 5, rx: 2, ry: 2,
+    fill: colors.accent, selectable: false, evented: false,
   });
 
-  // Body text — height fills down to the bottom row zone
-  const BODY_HEIGHT = CANVAS_SIZE - 150 - BODY_TOP;   // stops before dots
-  const body = makeTextbox(slide.body, {
+  const body = txt(slide.body, {
     name: 'body',
     fontFamily: font.bodyFont,
     fontWeight: '400',
-    fontSize: 32,
+    fontSize: 28,
     fill: colors.primaryText,
     left: CONTENT_X,
-    top: BODY_TOP,
+    top: 0,
     width: CONTENT_WIDTH,
-    height: BODY_HEIGHT,
-    splitByGrapheme: false,
-    opacity: 0.8,
+    opacity: 0.82,
     lineHeight: 1.6,
     textAlign: alignment,
   }, interactive);
 
-  canvas.add(title, accentBar, body);
+  centerStack([
+    { obj: title, gap: 0 },
+    { obj: rule,  gap: 22 },
+    { obj: body,  gap: 20 },
+  ]);
+
+  canvas.add(title, rule, body);
   addBottomRow(canvas, slide, colors, totalSlides);
   canvas.renderAll();
 }
@@ -281,32 +260,17 @@ export function renderCtaSlide(
 ): void {
   canvas.clear();
 
-  // Background
-  canvas.add(new Rect({
-    left: 0, top: 0, width: CANVAS_SIZE, height: CANVAS_SIZE,
-    fill: colors.background, selectable: false, evented: false,
-  }));
-
+  canvas.add(new Rect({ left: 0, top: 0, width: CANVAS_SIZE, height: CANVAS_SIZE, fill: colors.background, selectable: false, evented: false }));
   addCornerMarks(canvas, colors);
   addTopRow(canvas, slide, font, colors, totalSlides);
 
-  // Accent separator
-  const CTA_RULE_TOP     = 360;
-  const CTA_TAKEAWAY_TOP = 400;
-  const CTA_LINE_TOP     = 700;
-
-  const accentLine = new Rect({
-    left: CONTENT_X,
-    top: CTA_RULE_TOP,
-    width: 80,
-    height: 5,
-    rx: 2, ry: 2,
-    fill: colors.accent,
-    selectable: false, evented: false,
+  const rule = new Rect({
+    left: CONTENT_X, top: 0,
+    width: 80, height: 5, rx: 2, ry: 2,
+    fill: colors.accent, selectable: false, evented: false,
   });
 
-  // Takeaway — italic serif, up to 3 lines (44px × 1.3 ≈ 57px/line × 3 = 171px)
-  const takeaway = makeText(slide.body, {
+  const takeaway = txt(slide.body, {
     name: 'body',
     fontFamily: font.headingFont,
     fontStyle: 'italic',
@@ -314,29 +278,32 @@ export function renderCtaSlide(
     fontSize: 44,
     fill: colors.primaryText,
     left: CONTENT_X,
-    top: CTA_TAKEAWAY_TOP,
+    top: 0,
     width: CONTENT_WIDTH,
-    height: 280,
-    splitByGrapheme: false,
-    lineHeight: 1.3,
+    lineHeight: 1.25,
     textAlign: alignment,
   }, interactive);
 
-  // CTA line
-  const cta = makeText('Follow for daily science drops', {
+  const cta = txt('Follow for daily science drops', {
     name: 'cta',
     fontFamily: font.bodyFont,
     fontWeight: '400',
-    fontSize: 28,
+    fontSize: 26,
     fill: colors.accent,
     left: CONTENT_X,
-    top: CTA_LINE_TOP,
+    top: 0,
     width: CONTENT_WIDTH,
     textAlign: alignment,
     selectable: false, evented: false,
   }, false);
 
-  canvas.add(accentLine, takeaway, cta);
+  centerStack([
+    { obj: rule,     gap: 0 },
+    { obj: takeaway, gap: 24 },
+    { obj: cta,      gap: 36 },
+  ]);
+
+  canvas.add(rule, takeaway, cta);
   addBottomRow(canvas, slide, colors, totalSlides);
   canvas.renderAll();
 }

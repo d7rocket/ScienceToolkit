@@ -1,4 +1,4 @@
-import { Canvas, FabricText, Textbox, Rect, IText } from 'fabric';
+import { Canvas, FabricText, Textbox, Rect } from 'fabric';
 import type { ParsedSlide, ColorScheme, FontPairing } from '../types/carousel';
 import {
   CANVAS_SIZE,
@@ -11,26 +11,27 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+/** Always uses Textbox so text auto-wraps at the specified width in both modes. */
 function makeText(
   text: string,
   options: Record<string, unknown>,
   interactive: boolean
 ) {
-  if (interactive) {
-    return new IText(text, { ...options, selectable: true, evented: true, editable: true });
-  }
-  return new FabricText(text, { ...options, selectable: false, evented: false });
+  return new Textbox(text, {
+    ...options,
+    selectable: interactive,
+    evented: interactive,
+    editable: interactive,
+  });
 }
 
+/** Alias — identical to makeText; kept for call-site clarity. */
 function makeTextbox(
   text: string,
   options: Record<string, unknown>,
   interactive: boolean
 ) {
-  if (interactive) {
-    return new IText(text, { ...options, selectable: true, evented: true, editable: true });
-  }
-  return new Textbox(text, { ...options, selectable: false, evented: false });
+  return makeText(text, options, interactive);
 }
 
 /** L-shaped corner marks at top-left and bottom-right of the slide (matching reference HTML). */
@@ -157,7 +158,11 @@ export function renderHookSlide(
   addCornerMarks(canvas, colors);
   addTopRow(canvas, slide, font, colors, totalSlides);
 
-  // Large italic title — vertically centered in upper half
+  // Large italic title — 64px, allow up to 2 lines (64px × 1.25 ≈ 160px)
+  const HOOK_TITLE_TOP = 280;
+  const HOOK_RULE_TOP  = HOOK_TITLE_TOP + 190;  // 470 — below 2-line title
+  const HOOK_BODY_TOP  = HOOK_RULE_TOP + 36;    // 506
+
   const title = makeText(slide.title, {
     name: 'title',
     fontFamily: font.headingFont,
@@ -166,7 +171,7 @@ export function renderHookSlide(
     fontSize: 64,
     fill: colors.primaryText,
     left: CONTENT_X,
-    top: 300,
+    top: HOOK_TITLE_TOP,
     width: CONTENT_WIDTH,
     textAlign: 'center',
   }, interactive);
@@ -174,7 +179,7 @@ export function renderHookSlide(
   // Accent rule below title
   const rule = new Rect({
     left: CANVAS_SIZE / 2 - 40,
-    top: 490,
+    top: HOOK_RULE_TOP,
     width: 80,
     height: 5,
     rx: 2, ry: 2,
@@ -182,7 +187,7 @@ export function renderHookSlide(
     selectable: false, evented: false,
   });
 
-  // Body text in highlight color
+  // Body text in highlight color — capped height to avoid dots overlap
   const body = makeText(slide.body, {
     name: 'body',
     fontFamily: font.bodyFont,
@@ -190,8 +195,10 @@ export function renderHookSlide(
     fontSize: 33,
     fill: colors.highlight,
     left: CONTENT_X,
-    top: 530,
+    top: HOOK_BODY_TOP,
     width: CONTENT_WIDTH,
+    height: CANVAS_SIZE - 150 - HOOK_BODY_TOP,
+    splitByGrapheme: false,
     textAlign: 'center',
   }, interactive);
 
@@ -216,7 +223,11 @@ export function renderBodySlide(
   addCornerMarks(canvas, colors);
   addTopRow(canvas, slide, font, colors, totalSlides);
 
-  // Title
+  // Title — allow up to 2 lines (52px × 1.25 lh ≈ 130px)
+  const TITLE_TOP = CONTENT_Y + 20;      // 140
+  const RULE_TOP  = TITLE_TOP + 155;     // 295 — enough room below 2-line title
+  const BODY_TOP  = RULE_TOP + 30;       // 325
+
   const title = makeText(slide.title, {
     name: 'title',
     fontFamily: font.headingFont,
@@ -224,7 +235,7 @@ export function renderBodySlide(
     fontSize: 52,
     fill: colors.primaryText,
     left: CONTENT_X,
-    top: CONTENT_Y + 20,
+    top: TITLE_TOP,
     width: CONTENT_WIDTH,
     textAlign: alignment,
   }, interactive);
@@ -232,7 +243,7 @@ export function renderBodySlide(
   // Accent bar: 80px wide × 5px — below title
   const accentBar = new Rect({
     left: CONTENT_X,
-    top: CONTENT_Y + 20 + 66 + 20,
+    top: RULE_TOP,
     width: 80,
     height: 5,
     rx: 2, ry: 2,
@@ -240,7 +251,8 @@ export function renderBodySlide(
     selectable: false, evented: false,
   });
 
-  // Body text
+  // Body text — height fills down to the bottom row zone
+  const BODY_HEIGHT = CANVAS_SIZE - 150 - BODY_TOP;   // stops before dots
   const body = makeTextbox(slide.body, {
     name: 'body',
     fontFamily: font.bodyFont,
@@ -248,8 +260,10 @@ export function renderBodySlide(
     fontSize: 32,
     fill: colors.primaryText,
     left: CONTENT_X,
-    top: CONTENT_Y + 140,
+    top: BODY_TOP,
     width: CONTENT_WIDTH,
+    height: BODY_HEIGHT,
+    splitByGrapheme: false,
     opacity: 0.8,
     lineHeight: 1.6,
     textAlign: alignment,
@@ -277,9 +291,13 @@ export function renderCtaSlide(
   addTopRow(canvas, slide, font, colors, totalSlides);
 
   // Accent separator
+  const CTA_RULE_TOP     = 360;
+  const CTA_TAKEAWAY_TOP = 400;
+  const CTA_LINE_TOP     = 700;
+
   const accentLine = new Rect({
     left: CONTENT_X,
-    top: CANVAS_SIZE / 2 - 60,
+    top: CTA_RULE_TOP,
     width: 80,
     height: 5,
     rx: 2, ry: 2,
@@ -287,7 +305,7 @@ export function renderCtaSlide(
     selectable: false, evented: false,
   });
 
-  // Takeaway text
+  // Takeaway — italic serif, up to 3 lines (44px × 1.3 ≈ 57px/line × 3 = 171px)
   const takeaway = makeText(slide.body, {
     name: 'body',
     fontFamily: font.headingFont,
@@ -296,8 +314,11 @@ export function renderCtaSlide(
     fontSize: 44,
     fill: colors.primaryText,
     left: CONTENT_X,
-    top: CANVAS_SIZE / 2 - 20,
+    top: CTA_TAKEAWAY_TOP,
     width: CONTENT_WIDTH,
+    height: 280,
+    splitByGrapheme: false,
+    lineHeight: 1.3,
     textAlign: alignment,
   }, interactive);
 
@@ -309,7 +330,7 @@ export function renderCtaSlide(
     fontSize: 28,
     fill: colors.accent,
     left: CONTENT_X,
-    top: CANVAS_SIZE / 2 + 180,
+    top: CTA_LINE_TOP,
     width: CONTENT_WIDTH,
     textAlign: alignment,
     selectable: false, evented: false,

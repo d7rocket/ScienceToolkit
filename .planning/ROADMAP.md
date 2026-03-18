@@ -56,12 +56,12 @@ Plans:
   3. User can override any of the 4 color roles and see slides update in real-time
   4. User can edit slide text inline on the canvas and the export reflects those edits exactly
   5. Typography follows editorial hierarchy and whitespace-to-content ratio is visibly balanced across all slide layouts
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Default template, typography system, and design constants
-- [ ] 06-02: Font picker, palette editor, and live preview wiring
-- [ ] 06-03: Inline text editing and spacing/alignment controls
+- [ ] 06-01-PLAN.md — Install fonts, define type contracts, extend store, parameterize layouts with geometric elements
+- [ ] 06-02-PLAN.md — DesignEditor component (font picker, color editor, alignment toggle), three-column layout wiring
+- [ ] 06-03-PLAN.md — Inline text editing via IText and visual verification checkpoint
 
 ## Progress
 

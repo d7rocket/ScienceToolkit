@@ -1,0 +1,326 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: transparent; }
+
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 0;
+    gap: 1rem;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .stage {
+    width: 420px;
+    height: 420px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 0.5px solid #D0CCC4;
+    background: #FAF8F4;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    background: #FAF8F4;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 32px 36px 30px;
+    opacity: 0;
+    transform: translateX(24px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+  }
+  .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+  .slide.exit { opacity: 0; transform: translateX(-24px); }
+
+  /* Corner decoration — consistent across all slides */
+  .corner-tl, .corner-br {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    pointer-events: none;
+  }
+  .corner-tl { top: 0; left: 0; }
+  .corner-br { bottom: 0; right: 0; transform: rotate(180deg); }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .slide-tag {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9E8C6A;
+  }
+  .slide-num {
+    font-size: 10px;
+    font-weight: 400;
+    color: #BCB5A8;
+    letter-spacing: 0.06em;
+  }
+
+  .slide-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .slide-title {
+    font-family: 'Lora', serif;
+    font-size: 24px;
+    line-height: 1.25;
+    color: #1A1714;
+    font-weight: 600;
+  }
+  .slide-title em {
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .slide-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #4A4540;
+    font-weight: 300;
+  }
+  .slide-text strong {
+    font-weight: 500;
+    color: #1A1714;
+  }
+
+  /* Accent rule under title */
+  .title-rule {
+    width: 32px;
+    height: 2px;
+    background: #C8A96E;
+    border-radius: 1px;
+  }
+
+  /* Dot nav */
+  .bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .dots { display: flex; gap: 5px; }
+  .dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #D0CCC4;
+    transition: width 0.3s, border-radius 0.3s, background 0.3s;
+  }
+  .dot.active { width: 16px; border-radius: 2px; background: #C8A96E; }
+
+  .swipe-hint {
+    font-size: 10px;
+    color: #BCB5A8;
+    letter-spacing: 0.06em;
+  }
+
+  /* Slide 1 — large italic opener */
+  .s1 .slide-title { font-size: 28px; font-style: italic; font-weight: 400; }
+
+  /* Controls */
+  .controls { display: flex; align-items: center; gap: 14px; }
+  .nav-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 0.5px solid var(--color-border-secondary);
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .nav-btn:hover { background: var(--color-background-secondary); }
+  .counter {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    min-width: 40px;
+    text-align: center;
+  }
+  .copy-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 5px;
+    padding: 5px 11px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .copy-btn:hover { background: var(--color-background-secondary); }
+</style>
+
+<div class="wrap">
+  <div class="stage" id="stage">
+
+    <!-- Corner SVG — injected by JS into every slide -->
+
+    <div class="slide s1 active" data-idx="0">
+      <div class="top-row">
+        <span class="slide-tag">Science Drop</span>
+        <span class="slide-num">01 — 06</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-title">Sunlight's <em>Hidden</em> Fuel Problem</div>
+        <div class="title-rule"></div>
+        <div class="slide-text">What if clean energy was trapped inside a nitrogen ring? ☀️</div>
+      </div>
+      <div class="bottom-row">
+        <div class="dots" id="d0"></div>
+        <span class="swipe-hint">swipe →</span>
+      </div>
+    </div>
+
+    <div class="slide" data-idx="1">
+      <div class="top-row">
+        <span class="slide-tag">The Challenge</span>
+        <span class="slide-num">02 — 06</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-title">More Energy Than We Can Use</div>
+        <div class="title-rule"></div>
+        <div class="slide-text">The Sun delivers enough energy every hour to power Earth for a year. The problem isn't supply — it's <strong>conversion</strong>. Scientists have chased artificial photosynthesis for decades, but one key piece was missing.</div>
+      </div>
+      <div class="bottom-row"><div class="dots" id="d1"></div><span class="swipe-hint">swipe →</span></div>
+    </div>
+
+    <div class="slide" data-idx="2">
+      <div class="top-row">
+        <span class="slide-tag">The Material</span>
+        <span class="slide-num">03 — 06</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-title">The Material That <em>Acts Like</em> a Leaf</div>
+        <div class="title-rule"></div>
+        <div class="slide-text"><strong>Polyheptazine imides</strong> — layered nitrogen-rich sheets — absorb visible light and drive reactions: splitting water into hydrogen or converting CO₂ into fuel. But with thousands of metal combinations to test, nobody knew which ones would work.</div>
+      </div>
+      <div class="bottom-row"><div class="dots" id="d2"></div><span class="swipe-hint">swipe →</span></div>
+    </div>
+
+    <div class="slide" data-idx="3">
+      <div class="top-row">
+        <span class="slide-tag">The Method</span>
+        <span class="slide-num">04 — 06</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-title">53 Metals, One <em>Quantum</em> Map</div>
+        <div class="title-rule"></div>
+        <div class="slide-text">A team used <strong>many-body perturbation theory</strong> — quantum math tracking how electrons push and pull each other — to model 53 metals. They built a predictive framework: a recipe book for solar fuel catalysts.</div>
+      </div>
+      <div class="bottom-row"><div class="dots" id="d3"></div><span class="swipe-hint">swipe →</span></div>
+    </div>
+
+    <div class="slide" data-idx="4">
+      <div class="top-row">
+        <span class="slide-tag">The Proof</span>
+        <span class="slide-num">05 — 06</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-title">The Lab <em>Confirmed</em> the Math</div>
+        <div class="title-rule"></div>
+        <div class="slide-text">Eight materials were synthesized from computational predictions. Metals tucked between molecular layers dramatically boosted <strong>charge separation</strong> — the splitting of charges that powers the reaction. Theory and experiment aligned.</div>
+      </div>
+      <div class="bottom-row"><div class="dots" id="d4"></div><span class="swipe-hint">swipe →</span></div>
+    </div>
+
+    <div class="slide" data-idx="5">
+      <div class="top-row">
+        <span class="slide-tag">The Takeaway</span>
+        <span class="slide-num">06 — 06</span>
+      </div>
+      <div class="slide-body">
+        <div class="slide-title">Solar Fuels Just Got a <em>Shortcut</em></div>
+        <div class="title-rule"></div>
+        <div class="slide-text">Designing photocatalysts no longer requires years of trial and error. The quantum roadmap is here.<br><br>Follow for daily science drops. 🔬</div>
+      </div>
+      <div class="bottom-row"><div class="dots" id="d5"></div><span class="swipe-hint"></span></div>
+    </div>
+
+  </div>
+
+  <div class="controls">
+    <button class="nav-btn" id="prev">←</button>
+    <span class="counter" id="counter">1 / 6</span>
+    <button class="nav-btn" id="next">→</button>
+  </div>
+  <button class="copy-btn" id="copyBtn">Copy caption</button>
+</div>
+
+<script>
+  const cornerSVG = `<svg class="corner-tl" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0 L48 0 L48 4 L4 4 L4 48 L0 48 Z" fill="#C8A96E" opacity="0.35"/>
+    <circle cx="4" cy="4" r="3" fill="#C8A96E" opacity="0.55"/>
+  </svg>
+  <svg class="corner-br" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0 L48 0 L48 4 L4 4 L4 48 L0 48 Z" fill="#C8A96E" opacity="0.35"/>
+    <circle cx="4" cy="4" r="3" fill="#C8A96E" opacity="0.55"/>
+  </svg>`;
+
+  const total = 6;
+  let cur = 0;
+
+  const captions = [
+    "What if clean energy was trapped inside a nitrogen ring? ☀️\n\n→ Slide 2/6",
+    "The Sun delivers enough energy every hour to power Earth for a year.\n\nThe problem isn't supply — it's conversion. Scientists have chased artificial photosynthesis for decades, but one key piece was missing.\n\n→ Slide 3/6",
+    "Polyheptazine imides — layered nitrogen-rich sheets — absorb visible light and drive reactions.\n\nSplitting water into hydrogen. Converting CO₂ into fuel. But with thousands of possible metal combinations, nobody knew which ones would work.\n\n→ Slide 4/6",
+    "A team used many-body perturbation theory — quantum math tracking how electrons push and pull each other — to model 53 metals.\n\nThey built a predictive framework: a recipe book for solar fuel catalysts.\n\n→ Slide 5/6",
+    "Eight materials synthesized. Theory confirmed by experiment.\n\nMetals tucked between molecular layers dramatically boosted charge separation — the key driver of the reaction.\n\n→ Slide 6/6",
+    "Designing photocatalysts no longer requires years of trial and error.\n\nThe quantum roadmap is here.\n\nFollow for daily science drops. 🔬\n\n#Science #SolarFuel #CleanEnergy #Photocatalysis #Chemistry #Physics"
+  ];
+
+  document.querySelectorAll('.slide').forEach(s => {
+    s.insertAdjacentHTML('afterbegin', cornerSVG);
+  });
+
+  function buildDots(active) {
+    for (let i = 0; i < total; i++) {
+      const c = document.getElementById('d' + i);
+      if (!c) continue;
+      c.innerHTML = '';
+      for (let j = 0; j < total; j++) {
+        const d = document.createElement('div');
+        d.className = 'dot' + (j === active ? ' active' : '');
+        c.appendChild(d);
+      }
+    }
+  }
+
+  function goTo(idx) {
+    const slides = document.querySelectorAll('.slide');
+    slides[cur].classList.remove('active');
+    slides[cur].classList.add('exit');
+    setTimeout(() => slides[cur].classList.remove('exit'), 380);
+    cur = (idx + total) % total;
+    slides[cur].classList.add('active');
+    document.getElementById('counter').textContent = (cur + 1) + ' / ' + total;
+    buildDots(cur);
+  }
+
+  document.getElementById('prev').onclick = () => goTo(cur - 1);
+  document.getElementById('next').onclick = () => goTo(cur + 1);
+
+  document.getElementById('copyBtn').onclick = function() {
+    navigator.clipboard.writeText(captions[cur]).then(() => {
+      this.textContent = 'Copied!';
+      setTimeout(() => this.textContent = 'Copy caption', 1500);
+    });
+  };
+
+  buildDots(0);
+</script>

@@ -133,3 +133,15 @@ None - no external service configuration required.
 ---
 *Phase: 05-renderer-and-export*
 *Completed: 2026-03-18*
+
+## Self-Check: PASSED
+
+- FOUND: carousel-ui/src/canvas/canvasRegistry.ts
+- FOUND: carousel-ui/src/export/exportPng.ts
+- FOUND: carousel-ui/src/export/exportZip.ts
+- FOUND: carousel-ui/src/components/ExportPanel.tsx
+- FOUND: .planning/phases/05-renderer-and-export/05-03-SUMMARY.md
+- FOUND: commit 958deb3 (Task 1)
+- FOUND: commit 5a7dd3f (Task 2)
+- FOUND: commit ec7d9a1 (Task 3 checkpoint)
+- FOUND: commit 593344b (plan metadata)
